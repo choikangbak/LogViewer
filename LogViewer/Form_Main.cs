@@ -1,5 +1,4 @@
 using Dapper;
-using LogViewer.Repositories;
 using Npgsql;
 using System.ComponentModel;
 using System.Configuration;
@@ -31,7 +30,6 @@ namespace LogViewer
             Cb_Warning.Checked = true;
             Cb_Error.Checked = true;
             Cb_Critical.Checked = true;
-            Cb_Off.Checked = true;
 
             Search();
         }
@@ -48,7 +46,6 @@ namespace LogViewer
             if (Cb_Warning.Checked) levels.Add("W");
             if (Cb_Error.Checked) levels.Add("E");
             if (Cb_Critical.Checked) levels.Add("C");
-            if (Cb_Off.Checked) levels.Add("O");
 
             string keyword = Tb_Search.Text.Trim();
 
@@ -61,12 +58,46 @@ namespace LogViewer
                 conn.Open();
                 sql = string.Format("SELECT * FROM log WHERE {0} {1} {2} ORDER BY timestamp DESC", timeStmt, levelStmt, keywordStmt);
 
+                // original start
                 cmd = new NpgsqlCommand(sql, conn);
-                dt = new DataTable();
-                dt.Load(cmd.ExecuteReader());
+                //dt = new DataTable();
+                //dt.Load(cmd.ExecuteReader());
                 conn.Close();
-                Dgv_Log.DataSource = null;
-                Dgv_Log.DataSource = dt;
+                //Dgv_Log.DataSource = null;
+                //Dgv_Log.DataSource = dt;
+                // original end
+
+                // Dapper ORM
+                List<Log> logList = conn.Query<Log>(sql).ToList();
+
+                // binding
+                var bindingList = new BindingList<Log>(logList);
+                var source = new BindingSource(bindingList, null);
+                Dgv_Log.DataSource = source;
+
+                // visibility
+                Dgv_Log.Columns["id"].Visible = false;
+                Dgv_Log.Columns["created_at"].Visible = false;
+
+                // header text
+                Dgv_Log.Columns["timestamp"].HeaderText = "시간";
+                Dgv_Log.Columns["level"].HeaderText = "레벨";
+                Dgv_Log.Columns["message"].HeaderText = "내용";
+
+                // width
+                Dgv_Log.Columns["timestamp"].Width = 150;
+                Dgv_Log.Columns["level"].Width = 80;
+
+                for (int i = 0; i < Dgv_Log.Rows.Count; i++)
+                {
+                    string levelValue = Dgv_Log.Rows[i].Cells["level"].Value.ToString();
+                    if (levelValue == "T") Dgv_Log.Rows[i].Cells["level"].Value = "Trace";
+                    if (levelValue == "D") Dgv_Log.Rows[i].Cells["level"].Value = "Debug";
+                    if (levelValue == "I") Dgv_Log.Rows[i].Cells["level"].Value = "Info";
+                    if (levelValue == "W") Dgv_Log.Rows[i].Cells["level"].Value = "Warning";
+                    if (levelValue == "E") Dgv_Log.Rows[i].Cells["level"].Value = "Error";
+                    if (levelValue == "C") Dgv_Log.Rows[i].Cells["level"].Value = "Critical";
+                }
             }
             catch (Exception ex)
             {
@@ -75,7 +106,7 @@ namespace LogViewer
             }
         }
 
-        private void Btn_Search_Click(object sender, EventArgs e)
+        private void Btn_SearchLog_Click(object sender, EventArgs e)
         {
             Search();
         }
@@ -140,7 +171,7 @@ namespace LogViewer
 
             if (n == 0)
             {
-                return " AND level NOT IN ('T', 'D', 'I', 'W', 'E', 'C', 'O') ";
+                return " AND level NOT IN ('T', 'D', 'I', 'W', 'E', 'C') ";
             }
 
             string levelStmt = " AND ( ";
@@ -161,6 +192,35 @@ namespace LogViewer
         {
             if (e.StateChanged != DataGridViewElementStates.Selected) return;
 
+        }
+
+        private void Btn_CreateIssue_Click(object sender, EventArgs e)
+        {
+            List<string> logsSelected = new List<string>();
+            for (int i = 0; i < Dgv_Log.Rows.Count; i++)
+            {
+                var row = Dgv_Log.Rows[i];
+                if (row.Selected)
+                {
+                    string timestamp = row.Cells["timestamp"].Value.ToString();
+                    string level = row.Cells["level"].Value.ToString();
+                    string message = row.Cells["message"].Value.ToString();
+
+                    if (level == "T") level = "Trace";
+                    if (level == "D") level = "Debug";
+                    if (level == "I") level = "Info";
+                    if (level == "W") level = "Warning";
+                    if (level == "E") level = "Error";
+                    if (level == "C") level = "Critical";
+
+                    string log = string.Format("[{0}] [{1}] {2}", timestamp, level, message);
+                    logsSelected.Add(log);
+                }
+            }
+            foreach (string log in logsSelected)
+            {
+                Console.WriteLine(log);
+            }
         }
     }
 }

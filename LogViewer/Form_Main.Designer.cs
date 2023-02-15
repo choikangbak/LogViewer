@@ -28,7 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.Dgv_Log = new System.Windows.Forms.DataGridView();
+            this.logBindingSource1 = new System.Windows.Forms.BindingSource(this.components);
             this.Dtp_StartTime = new System.Windows.Forms.DateTimePicker();
             this.Dtp_EndTime = new System.Windows.Forms.DateTimePicker();
             this.Lb_FromTo = new System.Windows.Forms.Label();
@@ -38,10 +40,15 @@
             this.Cb_Error = new System.Windows.Forms.CheckBox();
             this.Cb_Critical = new System.Windows.Forms.CheckBox();
             this.Tb_Search = new System.Windows.Forms.TextBox();
-            this.Btn_Search = new System.Windows.Forms.Button();
-            this.Cb_Off = new System.Windows.Forms.CheckBox();
+            this.Btn_SearchLog = new System.Windows.Forms.Button();
             this.Cb_Trace = new System.Windows.Forms.CheckBox();
+            this.logBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.logBindingSource2 = new System.Windows.Forms.BindingSource(this.components);
+            this.Btn_CreateIssue = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.Dgv_Log)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.logBindingSource1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.logBindingSource)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.logBindingSource2)).BeginInit();
             this.SuspendLayout();
             // 
             // Dgv_Log
@@ -56,9 +63,13 @@
             this.Dgv_Log.ReadOnly = true;
             this.Dgv_Log.RowTemplate.Height = 25;
             this.Dgv_Log.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.Dgv_Log.Size = new System.Drawing.Size(1051, 512);
+            this.Dgv_Log.Size = new System.Drawing.Size(1051, 502);
             this.Dgv_Log.TabIndex = 0;
             this.Dgv_Log.RowStateChanged += new System.Windows.Forms.DataGridViewRowStateChangedEventHandler(this.Dgv_Log_RowStateChanged);
+            // 
+            // logBindingSource1
+            // 
+            this.logBindingSource1.DataSource = typeof(LogViewer.Log);
             // 
             // Dtp_StartTime
             // 
@@ -147,31 +158,20 @@
             // 
             // Tb_Search
             // 
-            this.Tb_Search.Location = new System.Drawing.Point(864, 24);
+            this.Tb_Search.Location = new System.Drawing.Point(811, 24);
             this.Tb_Search.Name = "Tb_Search";
-            this.Tb_Search.Size = new System.Drawing.Size(159, 23);
+            this.Tb_Search.Size = new System.Drawing.Size(209, 23);
             this.Tb_Search.TabIndex = 10;
             // 
-            // Btn_Search
+            // Btn_SearchLog
             // 
-            this.Btn_Search.Location = new System.Drawing.Point(1023, 24);
-            this.Btn_Search.Name = "Btn_Search";
-            this.Btn_Search.Size = new System.Drawing.Size(64, 23);
-            this.Btn_Search.TabIndex = 11;
-            this.Btn_Search.Text = "검색";
-            this.Btn_Search.UseVisualStyleBackColor = true;
-            this.Btn_Search.Click += new System.EventHandler(this.Btn_Search_Click);
-            // 
-            // Cb_Off
-            // 
-            this.Cb_Off.AutoSize = true;
-            this.Cb_Off.Location = new System.Drawing.Point(807, 26);
-            this.Cb_Off.Name = "Cb_Off";
-            this.Cb_Off.Size = new System.Drawing.Size(43, 19);
-            this.Cb_Off.TabIndex = 12;
-            this.Cb_Off.Text = "Off";
-            this.Cb_Off.UseVisualStyleBackColor = true;
-            this.Cb_Off.CheckedChanged += new System.EventHandler(this.Cb_Off_CheckedChanged);
+            this.Btn_SearchLog.Location = new System.Drawing.Point(1020, 24);
+            this.Btn_SearchLog.Name = "Btn_SearchLog";
+            this.Btn_SearchLog.Size = new System.Drawing.Size(64, 23);
+            this.Btn_SearchLog.TabIndex = 11;
+            this.Btn_SearchLog.Text = "검색";
+            this.Btn_SearchLog.UseVisualStyleBackColor = true;
+            this.Btn_SearchLog.Click += new System.EventHandler(this.Btn_SearchLog_Click);
             // 
             // Cb_Trace
             // 
@@ -183,14 +183,32 @@
             this.Cb_Trace.Text = "Trace";
             this.Cb_Trace.UseVisualStyleBackColor = true;
             // 
+            // logBindingSource
+            // 
+            this.logBindingSource.DataSource = typeof(LogViewer.Log);
+            // 
+            // logBindingSource2
+            // 
+            this.logBindingSource2.DataSource = typeof(LogViewer.Log);
+            // 
+            // Btn_CreateIssue
+            // 
+            this.Btn_CreateIssue.Location = new System.Drawing.Point(1003, 574);
+            this.Btn_CreateIssue.Name = "Btn_CreateIssue";
+            this.Btn_CreateIssue.Size = new System.Drawing.Size(81, 23);
+            this.Btn_CreateIssue.TabIndex = 14;
+            this.Btn_CreateIssue.Text = "이슈 생성";
+            this.Btn_CreateIssue.UseVisualStyleBackColor = true;
+            this.Btn_CreateIssue.Click += new System.EventHandler(this.Btn_CreateIssue_Click);
+            // 
             // Form_Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1120, 609);
+            this.Controls.Add(this.Btn_CreateIssue);
             this.Controls.Add(this.Cb_Trace);
-            this.Controls.Add(this.Cb_Off);
-            this.Controls.Add(this.Btn_Search);
+            this.Controls.Add(this.Btn_SearchLog);
             this.Controls.Add(this.Tb_Search);
             this.Controls.Add(this.Cb_Critical);
             this.Controls.Add(this.Cb_Error);
@@ -205,6 +223,9 @@
             this.Text = "Log Viewer";
             this.Load += new System.EventHandler(this.Form_Main_Load);
             ((System.ComponentModel.ISupportInitialize)(this.Dgv_Log)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.logBindingSource1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.logBindingSource)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.logBindingSource2)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -222,8 +243,12 @@
         private CheckBox Cb_Error;
         private CheckBox Cb_Critical;
         private TextBox Tb_Search;
-        private Button Btn_Search;
-        private CheckBox Cb_Off;
+        private Button Btn_SearchLog;
         private CheckBox Cb_Trace;
+        private BindingSource logBindingSource1;
+        private BindingSource logBindingSource;
+        private BindingSource logBindingSource2;
+        private DataGridViewTextBoxColumn createdAtDataGridViewTextBoxColumn;
+        private Button Btn_CreateIssue;
     }
 }
