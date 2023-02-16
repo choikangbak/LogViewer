@@ -50,6 +50,7 @@
             this.btnMakeIssue.TabIndex = 0;
             this.btnMakeIssue.Text = "이슈만들기";
             this.btnMakeIssue.UseVisualStyleBackColor = true;
+            this.btnMakeIssue.Click += new System.EventHandler(this.btnMakeIssue_Click);
             // 
             // textBoxIssueTitle
             // 
@@ -145,8 +146,10 @@
             // 
             // FormMakeIssue
             // 
+            this.AcceptButton = this.btnCancel;
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.CancelButton = this.btnCancel;
             this.ClientSize = new System.Drawing.Size(800, 734);
             this.Controls.Add(this.btnAttachFile);
             this.Controls.Add(this.btnCancel);

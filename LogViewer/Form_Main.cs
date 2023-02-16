@@ -181,9 +181,41 @@ namespace LogViewer
             }
         }
 
+        private string getFullLevel(string s)
+        {
+            if (s == "T") return "Trace";
+            else if (s == "D") return "Debug";
+            else if (s == "I") return "Info";
+            else if (s == "W") return "Warning";
+            else if (s == "E") return "Error";
+            else if (s == "C") return "Critical";
+            else return "????";
+        }
+
+        private List<string> getSelectedLogs()
+        {
+            List<string> logs = new List<string>();
+            
+            for (int i = 0; i < Dgv_Log.Rows.Count; i++)
+            {
+                var row = Dgv_Log.Rows[i];
+                if (row.Selected)
+                {
+                    string time = row.Cells["timestamp"].Value.ToString();
+                    string level = row.Cells["level"].Value.ToString();
+                    string msg = row.Cells["message"].Value.ToString();
+                    level = getFullLevel(level);
+                    string log = string.Format("[{0}] [{1}] {2}", time, level, msg);
+                    logs.Add(log);
+                }
+            }
+            //foreach(string log in logs) Console.WriteLine(log);
+            return logs;
+        }
         private void ToolStripMenuItem_Click(object? sender, EventArgs e)
         {
             FormMakeIssue dlg = new FormMakeIssue();
+            dlg.setLogs(getSelectedLogs());
             dlg.ShowDialog();
 
 //            throw new NotImplementedException();
