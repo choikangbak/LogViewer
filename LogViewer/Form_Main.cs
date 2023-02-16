@@ -127,12 +127,8 @@ namespace LogViewer
                 for (int i = 0; i < Dgv_Log.Rows.Count; i++)
                 {
                     string levelValue = Dgv_Log.Rows[i].Cells["level"].Value.ToString();
-                    if (levelValue == "T") Dgv_Log.Rows[i].Cells["level"].Value = "Trace";
-                    if (levelValue == "D") Dgv_Log.Rows[i].Cells["level"].Value = "Debug";
-                    if (levelValue == "I") Dgv_Log.Rows[i].Cells["level"].Value = "Info";
-                    if (levelValue == "W") Dgv_Log.Rows[i].Cells["level"].Value = "Warning";
-                    if (levelValue == "E") Dgv_Log.Rows[i].Cells["level"].Value = "Error";
-                    if (levelValue == "C") Dgv_Log.Rows[i].Cells["level"].Value = "Critical";
+                    Dgv_Log.Rows[i].Cells["level"].Value = getFullLevel(levelValue);
+
                 }
             }
             catch (Exception ex) 
@@ -285,7 +281,6 @@ namespace LogViewer
                     string time = row.Cells["timestamp"].Value.ToString();
                     string level = row.Cells["level"].Value.ToString();
                     string msg = row.Cells["message"].Value.ToString();
-                    level = getFullLevel(level);
                     string log = string.Format("[{0}] [{1}] {2}", time, level, msg);
                     logs.Add(log);
                 }
