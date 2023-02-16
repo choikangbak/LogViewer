@@ -67,6 +67,12 @@ namespace LogViewer
                 conn.Close();
                 Dgv_Log.DataSource = null;
                 Dgv_Log.DataSource = dt;
+                Dgv_Log.Columns[0].Visible = false;
+                Dgv_Log.Columns[4].Visible = false;
+                DataGridViewColumn colTime = Dgv_Log.Columns["timestamp"];
+                colTime.FillWeight = 20;
+                DataGridViewColumn colLvl = Dgv_Log.Columns["level"];
+                colLvl.FillWeight = 10;
             }
             catch (Exception ex)
             {
@@ -161,6 +167,26 @@ namespace LogViewer
         {
             if (e.StateChanged != DataGridViewElementStates.Selected) return;
 
+        }
+
+        private void OnMouseUp(object sender, MouseEventArgs e)
+        {
+            if(e.Button == MouseButtons.Right)
+            {
+                ContextMenuStrip menu = new System.Windows.Forms.ContextMenuStrip();
+                ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem("ÀÌ½´»ý¼º");
+                toolStripMenuItem.Click += ToolStripMenuItem_Click;
+                menu.Items.Add(toolStripMenuItem);
+                menu.Show(MousePosition);
+            }
+        }
+
+        private void ToolStripMenuItem_Click(object? sender, EventArgs e)
+        {
+            FormMakeIssue dlg = new FormMakeIssue();
+            dlg.ShowDialog();
+
+//            throw new NotImplementedException();
         }
     }
 }
