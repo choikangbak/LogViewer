@@ -116,6 +116,7 @@ namespace LogViewer
 
                 // Dapper ORM
                 List<Log> logList = conn.Query<Log>(sql).ToList();
+                Console.WriteLine("logList.Count: " + logList.Count); // later to be deleted
 
                 // binding
                 var bindingList = new BindingList<Log>(logList);
@@ -123,7 +124,7 @@ namespace LogViewer
                 Dgv_Log.DataSource = source;
 
                 // visibility
-                Dgv_Log.Columns["id"].Visible = false;
+                Dgv_Log.Columns["id"].Visible = false;  
                 Dgv_Log.Columns["created_at"].Visible = false;
 
                 // header text
@@ -132,8 +133,11 @@ namespace LogViewer
                 Dgv_Log.Columns["message"].HeaderText = "내용";
 
                 // width
-                Dgv_Log.Columns["timestamp"].Width = 150;
+                Dgv_Log.Columns["timestamp"].Width = 170;
                 Dgv_Log.Columns["level"].Width = 80;
+
+                // timestamp format
+                Dgv_Log.Columns["timestamp"].DefaultCellStyle.Format = "yyyy-MM-dd HH:mm:ss.ss";
 
                 for (int i = 0; i < Dgv_Log.Rows.Count; i++)
                 {
@@ -146,10 +150,10 @@ namespace LogViewer
                     if (levelValue == "C") Dgv_Log.Rows[i].Cells["level"].Value = "Critical";
                 }
             }
-            catch (Exception ex) // deal with this later
+            catch (Exception ex) 
             {
                 conn.Close();
-                MessageBox.Show("Error: " + ex.Message);
+                Console.WriteLine("Error: " + ex.Message);
             }
         }
         private void Btn_InsertDbPassword_Click(object sender, EventArgs e)
@@ -177,15 +181,15 @@ namespace LogViewer
                 Tb_DbPassword.Enabled = false;
                 Btn_InsertDbPassword.Enabled = false;
 
-                Dtp_StartTime.Value = DateTime.Now.AddDays(-1);
-                Dtp_EndTime.Value = DateTime.Now;
-
                 Cb_Trace.Checked = true;
                 Cb_Debug.Checked = true;
                 Cb_Info.Checked = true;
                 Cb_Warning.Checked = true;
                 Cb_Error.Checked = true;
                 Cb_Critical.Checked = true;
+
+                Dtp_StartTime.Value = DateTime.Now.AddDays(-1);
+                Dtp_EndTime.Value = DateTime.Now;
 
                 Search();
             }
@@ -345,6 +349,20 @@ namespace LogViewer
                 var result = streamReader.ReadToEnd();
                 Console.WriteLine(result);
             }
+        }
+
+        private void Dgv_Log_Scroll(object sender, ScrollEventArgs e)
+        {
+            Console.WriteLine("===================================");
+            Console.WriteLine("{0} = {1}", "ScrollOrientation", e.ScrollOrientation);
+            Console.WriteLine("{0} = {1}", "Type", e.Type);
+            Console.WriteLine("{0} = {1}", "NewValue", e.NewValue);
+            Console.WriteLine("{0} = {1}", "OldValue", e.OldValue);
+            Console.WriteLine("Dgv_Log.Rows.Count: " + Dgv_Log.Rows.Count);
+            Console.WriteLine("Dgv_Log.FirstDisplayedScrollingRowIndex: " + Dgv_Log.FirstDisplayedScrollingRowIndex);
+            Console.WriteLine("Dgv_Log.RowCount: " + Dgv_Log.RowCount);
+            Console.WriteLine("Hit the bottom?: " + (Dgv_Log.FirstDisplayedScrollingRowIndex == Dgv_Log.RowCount-1));
+            Console.WriteLine("===================================");
         }
     }
 }

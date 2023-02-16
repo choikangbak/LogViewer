@@ -67,6 +67,7 @@
             this.Dgv_Log.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.Dgv_Log.Size = new System.Drawing.Size(1051, 502);
             this.Dgv_Log.TabIndex = 0;
+            this.Dgv_Log.Scroll += new System.Windows.Forms.ScrollEventHandler(this.Dgv_Log_Scroll);
             // 
             // logBindingSource1
             // 
