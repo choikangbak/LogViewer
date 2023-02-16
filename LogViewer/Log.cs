@@ -9,20 +9,19 @@ namespace LogViewer
 {
     public class Log
     {
-        [System.ComponentModel.DataAnnotations.Key]
-        [Column("id")]
         public int Id { get; set; }
-
-        [Column("timestamp")]
         public DateTime Timestamp { get; set; }
-
-        [Column("level")]
         public string Level { get; set; }
-
-        [Column("message")]
         public string Message { get; set; }
+        public DateTime Created_At { get; set; }
 
-        [Column("created_at")]
-        public DateTime CreatedAt { get; set; }
+        public Log(int id, DateTime timestamp, string level, string message, DateTime created_at) 
+        {
+            this.Id = id;
+            this.Timestamp = timestamp;
+            this.Level = level;
+            this.Message = message;
+            this.Created_At = created_at;
+        }
     }
 }
