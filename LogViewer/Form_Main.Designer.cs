@@ -45,6 +45,8 @@
             this.logBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.logBindingSource2 = new System.Windows.Forms.BindingSource(this.components);
             this.Btn_CreateIssue = new System.Windows.Forms.Button();
+            this.Tb_DbPassword = new System.Windows.Forms.TextBox();
+            this.Btn_InsertDbPassword = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.Dgv_Log)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.logBindingSource1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.logBindingSource)).BeginInit();
@@ -58,14 +60,13 @@
             this.Dgv_Log.AllowUserToOrderColumns = true;
             this.Dgv_Log.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.Dgv_Log.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.Dgv_Log.Location = new System.Drawing.Point(33, 66);
+            this.Dgv_Log.Location = new System.Drawing.Point(33, 86);
             this.Dgv_Log.Name = "Dgv_Log";
             this.Dgv_Log.ReadOnly = true;
             this.Dgv_Log.RowTemplate.Height = 25;
             this.Dgv_Log.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.Dgv_Log.Size = new System.Drawing.Size(1051, 502);
             this.Dgv_Log.TabIndex = 0;
-            this.Dgv_Log.RowStateChanged += new System.Windows.Forms.DataGridViewRowStateChangedEventHandler(this.Dgv_Log_RowStateChanged);
             // 
             // logBindingSource1
             // 
@@ -75,7 +76,7 @@
             // 
             this.Dtp_StartTime.CustomFormat = "yyyy-MM-dd HH:mm:ss.ss";
             this.Dtp_StartTime.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-            this.Dtp_StartTime.Location = new System.Drawing.Point(33, 24);
+            this.Dtp_StartTime.Location = new System.Drawing.Point(33, 44);
             this.Dtp_StartTime.Name = "Dtp_StartTime";
             this.Dtp_StartTime.Size = new System.Drawing.Size(176, 23);
             this.Dtp_StartTime.TabIndex = 1;
@@ -86,7 +87,7 @@
             // 
             this.Dtp_EndTime.CustomFormat = "yyyy-MM-dd HH:mm:ss.ss";
             this.Dtp_EndTime.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-            this.Dtp_EndTime.Location = new System.Drawing.Point(236, 24);
+            this.Dtp_EndTime.Location = new System.Drawing.Point(236, 44);
             this.Dtp_EndTime.Name = "Dtp_EndTime";
             this.Dtp_EndTime.Size = new System.Drawing.Size(174, 23);
             this.Dtp_EndTime.TabIndex = 2;
@@ -95,7 +96,7 @@
             // Lb_FromTo
             // 
             this.Lb_FromTo.AutoSize = true;
-            this.Lb_FromTo.Location = new System.Drawing.Point(215, 28);
+            this.Lb_FromTo.Location = new System.Drawing.Point(215, 48);
             this.Lb_FromTo.Name = "Lb_FromTo";
             this.Lb_FromTo.Size = new System.Drawing.Size(15, 15);
             this.Lb_FromTo.TabIndex = 3;
@@ -104,7 +105,7 @@
             // Cb_Debug
             // 
             this.Cb_Debug.AutoSize = true;
-            this.Cb_Debug.Location = new System.Drawing.Point(487, 26);
+            this.Cb_Debug.Location = new System.Drawing.Point(487, 46);
             this.Cb_Debug.Name = "Cb_Debug";
             this.Cb_Debug.Size = new System.Drawing.Size(62, 19);
             this.Cb_Debug.TabIndex = 4;
@@ -115,7 +116,7 @@
             // Cb_Info
             // 
             this.Cb_Info.AutoSize = true;
-            this.Cb_Info.Location = new System.Drawing.Point(555, 26);
+            this.Cb_Info.Location = new System.Drawing.Point(555, 46);
             this.Cb_Info.Name = "Cb_Info";
             this.Cb_Info.Size = new System.Drawing.Size(47, 19);
             this.Cb_Info.TabIndex = 5;
@@ -126,7 +127,7 @@
             // Cb_Warning
             // 
             this.Cb_Warning.AutoSize = true;
-            this.Cb_Warning.Location = new System.Drawing.Point(608, 26);
+            this.Cb_Warning.Location = new System.Drawing.Point(608, 46);
             this.Cb_Warning.Name = "Cb_Warning";
             this.Cb_Warning.Size = new System.Drawing.Size(71, 19);
             this.Cb_Warning.TabIndex = 6;
@@ -137,7 +138,7 @@
             // Cb_Error
             // 
             this.Cb_Error.AutoSize = true;
-            this.Cb_Error.Location = new System.Drawing.Point(685, 26);
+            this.Cb_Error.Location = new System.Drawing.Point(685, 46);
             this.Cb_Error.Name = "Cb_Error";
             this.Cb_Error.Size = new System.Drawing.Size(51, 19);
             this.Cb_Error.TabIndex = 7;
@@ -148,7 +149,7 @@
             // Cb_Critical
             // 
             this.Cb_Critical.AutoSize = true;
-            this.Cb_Critical.Location = new System.Drawing.Point(742, 26);
+            this.Cb_Critical.Location = new System.Drawing.Point(742, 46);
             this.Cb_Critical.Name = "Cb_Critical";
             this.Cb_Critical.Size = new System.Drawing.Size(63, 19);
             this.Cb_Critical.TabIndex = 8;
@@ -158,14 +159,14 @@
             // 
             // Tb_Search
             // 
-            this.Tb_Search.Location = new System.Drawing.Point(811, 24);
+            this.Tb_Search.Location = new System.Drawing.Point(811, 44);
             this.Tb_Search.Name = "Tb_Search";
             this.Tb_Search.Size = new System.Drawing.Size(209, 23);
             this.Tb_Search.TabIndex = 10;
             // 
             // Btn_SearchLog
             // 
-            this.Btn_SearchLog.Location = new System.Drawing.Point(1020, 24);
+            this.Btn_SearchLog.Location = new System.Drawing.Point(1020, 44);
             this.Btn_SearchLog.Name = "Btn_SearchLog";
             this.Btn_SearchLog.Size = new System.Drawing.Size(64, 23);
             this.Btn_SearchLog.TabIndex = 11;
@@ -176,12 +177,13 @@
             // Cb_Trace
             // 
             this.Cb_Trace.AutoSize = true;
-            this.Cb_Trace.Location = new System.Drawing.Point(427, 26);
+            this.Cb_Trace.Location = new System.Drawing.Point(427, 46);
             this.Cb_Trace.Name = "Cb_Trace";
             this.Cb_Trace.Size = new System.Drawing.Size(54, 19);
             this.Cb_Trace.TabIndex = 13;
             this.Cb_Trace.Text = "Trace";
             this.Cb_Trace.UseVisualStyleBackColor = true;
+            this.Cb_Trace.CheckedChanged += new System.EventHandler(this.Cb_Trace_CheckedChanged);
             // 
             // logBindingSource
             // 
@@ -193,7 +195,7 @@
             // 
             // Btn_CreateIssue
             // 
-            this.Btn_CreateIssue.Location = new System.Drawing.Point(1003, 574);
+            this.Btn_CreateIssue.Location = new System.Drawing.Point(1003, 594);
             this.Btn_CreateIssue.Name = "Btn_CreateIssue";
             this.Btn_CreateIssue.Size = new System.Drawing.Size(81, 23);
             this.Btn_CreateIssue.TabIndex = 14;
@@ -201,11 +203,31 @@
             this.Btn_CreateIssue.UseVisualStyleBackColor = true;
             this.Btn_CreateIssue.Click += new System.EventHandler(this.Btn_CreateIssue_Click);
             // 
+            // Tb_DbPassword
+            // 
+            this.Tb_DbPassword.Location = new System.Drawing.Point(33, 12);
+            this.Tb_DbPassword.Name = "Tb_DbPassword";
+            this.Tb_DbPassword.PasswordChar = '*';
+            this.Tb_DbPassword.Size = new System.Drawing.Size(209, 23);
+            this.Tb_DbPassword.TabIndex = 15;
+            // 
+            // Btn_InsertDbPassword
+            // 
+            this.Btn_InsertDbPassword.Location = new System.Drawing.Point(248, 12);
+            this.Btn_InsertDbPassword.Name = "Btn_InsertDbPassword";
+            this.Btn_InsertDbPassword.Size = new System.Drawing.Size(121, 23);
+            this.Btn_InsertDbPassword.TabIndex = 16;
+            this.Btn_InsertDbPassword.Text = "비밀번호 입력";
+            this.Btn_InsertDbPassword.UseVisualStyleBackColor = true;
+            this.Btn_InsertDbPassword.Click += new System.EventHandler(this.Btn_InsertDbPassword_Click);
+            // 
             // Form_Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1120, 609);
+            this.ClientSize = new System.Drawing.Size(1120, 631);
+            this.Controls.Add(this.Btn_InsertDbPassword);
+            this.Controls.Add(this.Tb_DbPassword);
             this.Controls.Add(this.Btn_CreateIssue);
             this.Controls.Add(this.Cb_Trace);
             this.Controls.Add(this.Btn_SearchLog);
@@ -250,5 +272,7 @@
         private BindingSource logBindingSource2;
         private DataGridViewTextBoxColumn createdAtDataGridViewTextBoxColumn;
         private Button Btn_CreateIssue;
+        private TextBox Tb_DbPassword;
+        private Button Btn_InsertDbPassword;
     }
 }
