@@ -21,17 +21,7 @@ namespace LogViewer
         {
             InitializeComponent();
 
-            Dtp_StartTime.Enabled = false;
-            Dtp_EndTime.Enabled = false;
-            Cb_Trace.Enabled = false;
-            Cb_Debug.Enabled = false;
-            Cb_Info.Enabled = false;
-            Cb_Warning.Enabled = false;
-            Cb_Error.Enabled = false;
-            Cb_Critical.Enabled = false;
-            Tb_Search.Enabled = false;
-            Btn_SearchLog.Enabled = false;
-            Btn_CreateIssue.Enabled = false;
+            DisableControls();
         }
 
         private void Form_Main_Load(object sender, EventArgs e)
@@ -55,8 +45,6 @@ namespace LogViewer
             Tb_Search.Enabled = false;
             Btn_SearchLog.Enabled = false;
             Dgv_Log.Enabled = false;
-
-            Btn_CreateIssue.Enabled = false; // later to be deleted
         }
 
         void EnableControls()
@@ -72,8 +60,6 @@ namespace LogViewer
             Tb_Search.Enabled = true;
             Btn_SearchLog.Enabled = true;
             Dgv_Log.Enabled = true;
-
-            Btn_CreateIssue.Enabled = true; // later to be deleted
         }
 
         private void Search()
@@ -97,7 +83,6 @@ namespace LogViewer
 
             try
             {
-
                 /* 
                 conn.Open();
                 sql = string.Format("SELECT * FROM log WHERE {0} {1} {2} ORDER BY timestamp DESC", timeStmt, levelStmt, keywordStmt);
@@ -277,78 +262,44 @@ namespace LogViewer
             return levelStmt;
         }
 
-        private void Btn_CreateIssue_Click(object sender, EventArgs e) // later to be deleted
+        private string getFullLevel(string s)
         {
-            List<string> logsSelected = new List<string>();
+            if (s == "T") return "Trace";
+            else if (s == "D") return "Debug";
+            else if (s == "I") return "Info";
+            else if (s == "W") return "Warning";
+            else if (s == "E") return "Error";
+            else if (s == "C") return "Critical";
+            else return "????";
+        }
+
+        private List<string> getSelectedLogs()
+        {
+            List<string> logs = new List<string>();
+            
             for (int i = 0; i < Dgv_Log.Rows.Count; i++)
             {
                 var row = Dgv_Log.Rows[i];
                 if (row.Selected)
                 {
-                    string timestamp = row.Cells["timestamp"].Value.ToString();
+                    string time = row.Cells["timestamp"].Value.ToString();
                     string level = row.Cells["level"].Value.ToString();
-                    string message = row.Cells["message"].Value.ToString();
-
-                    if (level == "T") level = "Trace";
-                    if (level == "D") level = "Debug";
-                    if (level == "I") level = "Info";
-                    if (level == "W") level = "Warning";
-                    if (level == "E") level = "Error";
-                    if (level == "C") level = "Critical";
-
-                    string log = string.Format("[{0}] [{1}] {2}", timestamp, level, message);
-                    logsSelected.Add(log);
+                    string msg = row.Cells["message"].Value.ToString();
+                    level = getFullLevel(level);
+                    string log = string.Format("[{0}] [{1}] {2}", time, level, msg);
+                    logs.Add(log);
                 }
             }
-            foreach (string log in logsSelected)
-            {
-                Console.WriteLine(log);
-            }
-            // TEST
-            SendIssue("제목1", "내용1", logsSelected);
+            //foreach(string log in logs) Console.WriteLine(log);
+            return logs;
         }
 
-        private void SendIssue(string issueTitle, string issueContent, List<string> logsSelected)
+        private void ToolStripMenuItem_Click(object? sender, EventArgs e)
         {
-            var httpWebRequest = (HttpWebRequest)WebRequest.Create("https://api.notion.com/v1/pages");
-            const string authToken = "secret_0dhSZOLiOJagsBigLH9ok1C0PlBaAGesjCdNOBcCoOp";
-            const string notionVersion = "2022-02-22";
-            httpWebRequest.Headers.Add("Authorization", authToken);
-            httpWebRequest.Headers.Add("Notion-Version", notionVersion);
-            httpWebRequest.ContentType = "application/json";
-            httpWebRequest.Method = "POST";
-
-            const string databaseId = "337d9b78209b442185cccb11ba028dc4";
-
-            string parent = "\"parent\":{\"database_id\":\"" + databaseId + "\"}";
-            string icon = "\"icon\":{\"emoji\":\"📢\"}";
-            string title = "\"Title\":{\"title\":[{\"text\":{\"content\":\"" + issueTitle + "\"}}]}";
-            string content = "\"Content\":{\"type\":\"rich_text\",\"rich_text\":[{\"type\":\"text\",\"text\":{\"content\":\"" + issueContent + "\"}}]}";
-            string properties = "\"properties\":{" + title + "," + content + "}";
-            string child_heading2_log = "{\"object\":\"block\",\"type\":\"heading_2\",\"heading_2\":{\"rich_text\":[{\"type\":\"text\",\"text\":{\"content\":\"" + "관련된 로그(들)" + "\"}}]}}";
-            string children = "\"children\":[" + child_heading2_log + ",";
-            for (int i = 0; i < logsSelected.Count; i++)
-            {
-                var logSelected = logsSelected[i];
-                children += "{\"object\":\"block\",\"type\":\"bulleted_list_item\",\"bulleted_list_item\":{\"rich_text\":[{\"type\":\"text\",\"text\":{\"content\":\"" + logSelected + "\"}}]}}";
-
-                if (i < logsSelected.Count - 1) children += ",";
-                if (i == logsSelected.Count - 1) children += "]";
-            }
-            string json = "{" + parent + "," + icon + "," + properties + "," + children + "}";
-
-            using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
-            {
-                streamWriter.Write(json);
-                Console.WriteLine(json);
-            }
-
-            var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
-            using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
-            {
-                var result = streamReader.ReadToEnd();
-                Console.WriteLine(result);
-            }
+            FormMakeIssue dlg = new FormMakeIssue();
+            dlg.setLogs(getSelectedLogs());
+            dlg.ShowDialog();
+//            throw new NotImplementedException();
         }
 
         private void Dgv_Log_Scroll(object sender, ScrollEventArgs e)
@@ -363,6 +314,18 @@ namespace LogViewer
             Console.WriteLine("Dgv_Log.RowCount: " + Dgv_Log.RowCount);
             Console.WriteLine("Hit the bottom?: " + (Dgv_Log.FirstDisplayedScrollingRowIndex == Dgv_Log.RowCount-1));
             Console.WriteLine("===================================");
+        }
+
+        private void Dgv_Log_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                ContextMenuStrip menu = new System.Windows.Forms.ContextMenuStrip();
+                ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem("이슈생성");
+                toolStripMenuItem.Click += ToolStripMenuItem_Click;
+                menu.Items.Add(toolStripMenuItem);
+                menu.Show(MousePosition);
+            }
         }
     }
 }
