@@ -124,10 +124,6 @@ namespace LogViewer
 
                 Dgv_Log.DataSource = dt;
 
-                //// visibility
-                //Dgv_Log.Columns["id"].Visible = false;  
-                //Dgv_Log.Columns["created_at"].Visible = false;
-
                 // width
                 Dgv_Log.Columns[Constants.labelTime].Width = 170;
                 Dgv_Log.Columns[Constants.labelLevel].Width = 80;

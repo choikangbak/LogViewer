@@ -59,13 +59,14 @@
             this.Dgv_Log.AllowUserToOrderColumns = true;
             this.Dgv_Log.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.Dgv_Log.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.Dgv_Log.Location = new System.Drawing.Point(33, 95);
+            this.Dgv_Log.Location = new System.Drawing.Point(26, 71);
+            this.Dgv_Log.Margin = new System.Windows.Forms.Padding(2);
             this.Dgv_Log.Name = "Dgv_Log";
             this.Dgv_Log.ReadOnly = true;
             this.Dgv_Log.RowHeadersWidth = 51;
             this.Dgv_Log.RowTemplate.Height = 25;
             this.Dgv_Log.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.Dgv_Log.Size = new System.Drawing.Size(1248, 581);
+            this.Dgv_Log.Size = new System.Drawing.Size(971, 436);
             this.Dgv_Log.TabIndex = 0;
             this.Dgv_Log.Scroll += new System.Windows.Forms.ScrollEventHandler(this.Dgv_Log_Scroll);
             this.Dgv_Log.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Dgv_Log_MouseUp);
@@ -76,40 +77,45 @@
             // 
             // Dtp_StartTime
             // 
-            this.Dtp_StartTime.CustomFormat = Constants.timeFormat;
+            this.Dtp_StartTime.CustomFormat = "yyyy-MM-dd HH:mm:ss";
             this.Dtp_StartTime.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-            this.Dtp_StartTime.Location = new System.Drawing.Point(33, 52);
+            this.Dtp_StartTime.Location = new System.Drawing.Point(26, 39);
+            this.Dtp_StartTime.Margin = new System.Windows.Forms.Padding(2);
             this.Dtp_StartTime.Name = "Dtp_StartTime";
-            this.Dtp_StartTime.Size = new System.Drawing.Size(225, 27);
+            this.Dtp_StartTime.Size = new System.Drawing.Size(176, 23);
             this.Dtp_StartTime.TabIndex = 1;
             this.Dtp_StartTime.Value = new System.DateTime(2023, 2, 13, 16, 51, 41, 0);
             this.Dtp_StartTime.ValueChanged += new System.EventHandler(this.Dtp_StartTime_ValueChanged);
             // 
             // Dtp_EndTime
             // 
-            this.Dtp_EndTime.CustomFormat = Constants.timeFormat;
+            this.Dtp_EndTime.CustomFormat = "yyyy-MM-dd HH:mm:ss";
             this.Dtp_EndTime.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-            this.Dtp_EndTime.Location = new System.Drawing.Point(291, 52);
+            this.Dtp_EndTime.Location = new System.Drawing.Point(226, 39);
+            this.Dtp_EndTime.Margin = new System.Windows.Forms.Padding(2);
             this.Dtp_EndTime.Name = "Dtp_EndTime";
-            this.Dtp_EndTime.Size = new System.Drawing.Size(223, 27);
+            this.Dtp_EndTime.Size = new System.Drawing.Size(174, 23);
             this.Dtp_EndTime.TabIndex = 2;
+            this.Dtp_EndTime.Value = new System.DateTime(2023, 2, 17, 13, 29, 6, 0);
             this.Dtp_EndTime.ValueChanged += new System.EventHandler(this.Dtp_EndTime_ValueChanged);
             // 
             // Lb_FromTo
             // 
             this.Lb_FromTo.AutoSize = true;
-            this.Lb_FromTo.Location = new System.Drawing.Point(264, 54);
+            this.Lb_FromTo.Location = new System.Drawing.Point(205, 40);
+            this.Lb_FromTo.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.Lb_FromTo.Name = "Lb_FromTo";
-            this.Lb_FromTo.Size = new System.Drawing.Size(20, 20);
+            this.Lb_FromTo.Size = new System.Drawing.Size(15, 15);
             this.Lb_FromTo.TabIndex = 3;
             this.Lb_FromTo.Text = "~";
             // 
             // Cb_Debug
             // 
             this.Cb_Debug.AutoSize = true;
-            this.Cb_Debug.Location = new System.Drawing.Point(605, 55);
+            this.Cb_Debug.Location = new System.Drawing.Point(471, 41);
+            this.Cb_Debug.Margin = new System.Windows.Forms.Padding(2);
             this.Cb_Debug.Name = "Cb_Debug";
-            this.Cb_Debug.Size = new System.Drawing.Size(77, 24);
+            this.Cb_Debug.Size = new System.Drawing.Size(62, 19);
             this.Cb_Debug.TabIndex = 4;
             this.Cb_Debug.Text = "Debug";
             this.Cb_Debug.UseVisualStyleBackColor = true;
@@ -118,9 +124,10 @@
             // Cb_Info
             // 
             this.Cb_Info.AutoSize = true;
-            this.Cb_Info.Location = new System.Drawing.Point(688, 55);
+            this.Cb_Info.Location = new System.Drawing.Point(535, 41);
+            this.Cb_Info.Margin = new System.Windows.Forms.Padding(2);
             this.Cb_Info.Name = "Cb_Info";
-            this.Cb_Info.Size = new System.Drawing.Size(58, 24);
+            this.Cb_Info.Size = new System.Drawing.Size(47, 19);
             this.Cb_Info.TabIndex = 5;
             this.Cb_Info.Text = "Info";
             this.Cb_Info.UseVisualStyleBackColor = true;
@@ -129,9 +136,10 @@
             // Cb_Warning
             // 
             this.Cb_Warning.AutoSize = true;
-            this.Cb_Warning.Location = new System.Drawing.Point(752, 55);
+            this.Cb_Warning.Location = new System.Drawing.Point(585, 41);
+            this.Cb_Warning.Margin = new System.Windows.Forms.Padding(2);
             this.Cb_Warning.Name = "Cb_Warning";
-            this.Cb_Warning.Size = new System.Drawing.Size(89, 24);
+            this.Cb_Warning.Size = new System.Drawing.Size(71, 19);
             this.Cb_Warning.TabIndex = 6;
             this.Cb_Warning.Text = "Warning";
             this.Cb_Warning.UseVisualStyleBackColor = true;
@@ -140,9 +148,10 @@
             // Cb_Error
             // 
             this.Cb_Error.AutoSize = true;
-            this.Cb_Error.Location = new System.Drawing.Point(847, 55);
+            this.Cb_Error.Location = new System.Drawing.Point(659, 41);
+            this.Cb_Error.Margin = new System.Windows.Forms.Padding(2);
             this.Cb_Error.Name = "Cb_Error";
-            this.Cb_Error.Size = new System.Drawing.Size(63, 24);
+            this.Cb_Error.Size = new System.Drawing.Size(51, 19);
             this.Cb_Error.TabIndex = 7;
             this.Cb_Error.Text = "Error";
             this.Cb_Error.UseVisualStyleBackColor = true;
@@ -151,9 +160,10 @@
             // Cb_Critical
             // 
             this.Cb_Critical.AutoSize = true;
-            this.Cb_Critical.Location = new System.Drawing.Point(916, 55);
+            this.Cb_Critical.Location = new System.Drawing.Point(712, 41);
+            this.Cb_Critical.Margin = new System.Windows.Forms.Padding(2);
             this.Cb_Critical.Name = "Cb_Critical";
-            this.Cb_Critical.Size = new System.Drawing.Size(78, 24);
+            this.Cb_Critical.Size = new System.Drawing.Size(63, 19);
             this.Cb_Critical.TabIndex = 8;
             this.Cb_Critical.Text = "Critical";
             this.Cb_Critical.UseVisualStyleBackColor = true;
@@ -161,16 +171,18 @@
             // 
             // Tb_Search
             // 
-            this.Tb_Search.Location = new System.Drawing.Point(1000, 55);
+            this.Tb_Search.Location = new System.Drawing.Point(778, 41);
+            this.Tb_Search.Margin = new System.Windows.Forms.Padding(2);
             this.Tb_Search.Name = "Tb_Search";
-            this.Tb_Search.Size = new System.Drawing.Size(209, 27);
+            this.Tb_Search.Size = new System.Drawing.Size(163, 23);
             this.Tb_Search.TabIndex = 10;
             // 
             // Btn_SearchLog
             // 
-            this.Btn_SearchLog.Location = new System.Drawing.Point(1210, 55);
+            this.Btn_SearchLog.Location = new System.Drawing.Point(941, 41);
+            this.Btn_SearchLog.Margin = new System.Windows.Forms.Padding(2);
             this.Btn_SearchLog.Name = "Btn_SearchLog";
-            this.Btn_SearchLog.Size = new System.Drawing.Size(64, 27);
+            this.Btn_SearchLog.Size = new System.Drawing.Size(50, 23);
             this.Btn_SearchLog.TabIndex = 11;
             this.Btn_SearchLog.Text = "검색";
             this.Btn_SearchLog.UseVisualStyleBackColor = true;
@@ -179,9 +191,10 @@
             // Cb_Trace
             // 
             this.Cb_Trace.AutoSize = true;
-            this.Cb_Trace.Location = new System.Drawing.Point(532, 55);
+            this.Cb_Trace.Location = new System.Drawing.Point(414, 41);
+            this.Cb_Trace.Margin = new System.Windows.Forms.Padding(2);
             this.Cb_Trace.Name = "Cb_Trace";
-            this.Cb_Trace.Size = new System.Drawing.Size(67, 24);
+            this.Cb_Trace.Size = new System.Drawing.Size(54, 19);
             this.Cb_Trace.TabIndex = 13;
             this.Cb_Trace.Text = "Trace";
             this.Cb_Trace.UseVisualStyleBackColor = true;
@@ -197,17 +210,19 @@
             // 
             // Tb_DbPassword
             // 
-            this.Tb_DbPassword.Location = new System.Drawing.Point(33, 18);
+            this.Tb_DbPassword.Location = new System.Drawing.Point(26, 14);
+            this.Tb_DbPassword.Margin = new System.Windows.Forms.Padding(2);
             this.Tb_DbPassword.Name = "Tb_DbPassword";
             this.Tb_DbPassword.PasswordChar = '*';
-            this.Tb_DbPassword.Size = new System.Drawing.Size(209, 27);
+            this.Tb_DbPassword.Size = new System.Drawing.Size(163, 23);
             this.Tb_DbPassword.TabIndex = 15;
             // 
             // Btn_InsertDbPassword
             // 
-            this.Btn_InsertDbPassword.Location = new System.Drawing.Point(248, 18);
+            this.Btn_InsertDbPassword.Location = new System.Drawing.Point(193, 14);
+            this.Btn_InsertDbPassword.Margin = new System.Windows.Forms.Padding(2);
             this.Btn_InsertDbPassword.Name = "Btn_InsertDbPassword";
-            this.Btn_InsertDbPassword.Size = new System.Drawing.Size(121, 27);
+            this.Btn_InsertDbPassword.Size = new System.Drawing.Size(94, 24);
             this.Btn_InsertDbPassword.TabIndex = 16;
             this.Btn_InsertDbPassword.Text = "비밀번호 입력";
             this.Btn_InsertDbPassword.UseVisualStyleBackColor = true;
@@ -215,9 +230,9 @@
             // 
             // Form_Main
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1311, 698);
+            this.ClientSize = new System.Drawing.Size(1020, 524);
             this.Controls.Add(this.Btn_InsertDbPassword);
             this.Controls.Add(this.Tb_DbPassword);
             this.Controls.Add(this.Cb_Trace);
@@ -232,7 +247,6 @@
             this.Controls.Add(this.Dtp_EndTime);
             this.Controls.Add(this.Dtp_StartTime);
             this.Controls.Add(this.Dgv_Log);
-            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "Form_Main";
             this.Text = "Log Viewer";
             this.Load += new System.EventHandler(this.Form_Main_Load);
