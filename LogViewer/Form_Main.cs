@@ -64,8 +64,8 @@ namespace LogViewer
 
         private void Search()
         {
-            string startTime = Dtp_StartTime.Value.ToString("yyyy-MM-dd HH:mm:ss.ss");
-            string endTime = Dtp_EndTime.Value.ToString("yyyy-MM-dd HH:mm:ss.ss");
+            string startTime = Dtp_StartTime.Value.ToString(Constants.timeFormat);
+            string endTime = Dtp_EndTime.Value.ToString(Constants.timeFormat);
 
             List<string> levels = new List<string>();
             if (Cb_Trace.Checked) levels.Add("T");
@@ -104,34 +104,38 @@ namespace LogViewer
                 Console.WriteLine("logList.Count: " + logList.Count); // later to be deleted
 
                 // binding
-                var bindingList = new BindingList<Log>(logList);
-                var source = new BindingSource(bindingList, null);
-                Dgv_Log.DataSource = source;
+                //var bindingList = new BindingList<Log>(logList);
+                //var source = new BindingSource(bindingList, null);
+                //Dgv_Log.DataSource = source;
 
-                // visibility
-                Dgv_Log.Columns["id"].Visible = false;  
-                Dgv_Log.Columns["created_at"].Visible = false;
+                dt = new DataTable();
+                dt.Columns.Add(Constants.labelTime, typeof(DateTime));
+                dt.Columns.Add(Constants.labelLevel, typeof(String));
+                dt.Columns.Add(Constants.labelContent, typeof(String));
 
-                // header text
-                Dgv_Log.Columns["timestamp"].HeaderText = "시간";
-                Dgv_Log.Columns["level"].HeaderText = "레벨";
-                Dgv_Log.Columns["message"].HeaderText = "내용";
+                foreach (Log log in logList)
+                {
+                    DataRow dr = dt.NewRow();
+                    dr[Constants.labelTime] = log.Timestamp;
+                    dr[Constants.labelLevel] = getFullLevel(log.Level);
+                    dr[Constants.labelContent] = log.Message;
+                    dt.Rows.Add(dr);
+                }
+
+                Dgv_Log.DataSource = dt;
+
+                //// visibility
+                //Dgv_Log.Columns["id"].Visible = false;  
+                //Dgv_Log.Columns["created_at"].Visible = false;
 
                 // width
-                Dgv_Log.Columns["timestamp"].Width = 170;
-                Dgv_Log.Columns["level"].Width = 80;
+                Dgv_Log.Columns[Constants.labelTime].Width = 170;
+                Dgv_Log.Columns[Constants.labelLevel].Width = 80;
 
                 // timestamp format
-                Dgv_Log.Columns["timestamp"].DefaultCellStyle.Format = "yyyy-MM-dd HH:mm:ss.ss";
-
-                for (int i = 0; i < Dgv_Log.Rows.Count; i++)
-                {
-                    string levelValue = Dgv_Log.Rows[i].Cells["level"].Value.ToString();
-                    Dgv_Log.Rows[i].Cells["level"].Value = getFullLevel(levelValue);
-
-                }
+                Dgv_Log.Columns[Constants.labelTime].DefaultCellStyle.Format = Constants.timeFormat;
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 conn.Close();
                 Console.WriteLine("Error: " + ex.Message);
@@ -278,9 +282,9 @@ namespace LogViewer
                 var row = Dgv_Log.Rows[i];
                 if (row.Selected)
                 {
-                    string time = row.Cells["timestamp"].Value.ToString();
-                    string level = row.Cells["level"].Value.ToString();
-                    string msg = row.Cells["message"].Value.ToString();
+                    string time = row.Cells["시간"].Value.ToString();
+                    string level = row.Cells["레벨"].Value.ToString();
+                    string msg = row.Cells["내용"].Value.ToString();
                     string log = string.Format("[{0}] [{1}] {2}", time, level, msg);
                     logs.Add(log);
                 }

@@ -93,7 +93,7 @@ namespace LogViewer
             string title = this.textBoxIssueTitle.Text;
             string content = this.textBoxContents.Text;
 
-            //sendIssue2Notion(title, content);
+            sendIssue2Notion(title, content);
             slackSendMessage(Constants.urlSlack, slackMessage(title, content));
 
             this.Close();
@@ -134,5 +134,9 @@ static class Constants
     public const string urlIssueNotion = "https://www.notion.so/clevision/8651a74e9c344c67bd8407272d31664c?v=1f1718363a4a4823b5ba3e8afd1ae86c";
     public const string notionDbId = "337d9b78209b442185cccb11ba028dc4";
     public const string urlSlack = "https://hooks.slack.com/services/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";
+    public const string labelTime = "시간";
+    public const string labelLevel = "레벨";
+    public const string labelContent = "내용";
+    public const string timeFormat = "yyyy-MM-dd HH:mm:ss";
 }
 

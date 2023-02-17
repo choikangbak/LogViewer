@@ -76,7 +76,7 @@
             // 
             // Dtp_StartTime
             // 
-            this.Dtp_StartTime.CustomFormat = "yyyy-MM-dd HH:mm:ss.ss";
+            this.Dtp_StartTime.CustomFormat = Constants.timeFormat;
             this.Dtp_StartTime.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
             this.Dtp_StartTime.Location = new System.Drawing.Point(33, 52);
             this.Dtp_StartTime.Name = "Dtp_StartTime";
@@ -87,7 +87,7 @@
             // 
             // Dtp_EndTime
             // 
-            this.Dtp_EndTime.CustomFormat = "yyyy-MM-dd HH:mm:ss.ss";
+            this.Dtp_EndTime.CustomFormat = Constants.timeFormat;
             this.Dtp_EndTime.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
             this.Dtp_EndTime.Location = new System.Drawing.Point(291, 52);
             this.Dtp_EndTime.Name = "Dtp_EndTime";
