@@ -39,7 +39,7 @@
             this.Cb_Warning = new System.Windows.Forms.CheckBox();
             this.Cb_Error = new System.Windows.Forms.CheckBox();
             this.Cb_Critical = new System.Windows.Forms.CheckBox();
-            this.Tb_Search = new System.Windows.Forms.TextBox();
+            this.Tb_SearchLog = new System.Windows.Forms.TextBox();
             this.Btn_SearchLog = new System.Windows.Forms.Button();
             this.Cb_Trace = new System.Windows.Forms.CheckBox();
             this.logBindingSource = new System.Windows.Forms.BindingSource(this.components);
@@ -169,17 +169,18 @@
             this.Cb_Critical.UseVisualStyleBackColor = true;
             this.Cb_Critical.CheckedChanged += new System.EventHandler(this.Cb_Critical_CheckedChanged);
             // 
-            // Tb_Search
+            // Tb_SearchLog
             // 
-            this.Tb_Search.Location = new System.Drawing.Point(778, 41);
-            this.Tb_Search.Margin = new System.Windows.Forms.Padding(2);
-            this.Tb_Search.Name = "Tb_Search";
-            this.Tb_Search.Size = new System.Drawing.Size(163, 23);
-            this.Tb_Search.TabIndex = 10;
+            this.Tb_SearchLog.Location = new System.Drawing.Point(778, 38);
+            this.Tb_SearchLog.Margin = new System.Windows.Forms.Padding(2);
+            this.Tb_SearchLog.Name = "Tb_SearchLog";
+            this.Tb_SearchLog.Size = new System.Drawing.Size(163, 23);
+            this.Tb_SearchLog.TabIndex = 10;
+            this.Tb_SearchLog.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Tb_SearchLog_KeyDown);
             // 
             // Btn_SearchLog
             // 
-            this.Btn_SearchLog.Location = new System.Drawing.Point(941, 41);
+            this.Btn_SearchLog.Location = new System.Drawing.Point(941, 38);
             this.Btn_SearchLog.Margin = new System.Windows.Forms.Padding(2);
             this.Btn_SearchLog.Name = "Btn_SearchLog";
             this.Btn_SearchLog.Size = new System.Drawing.Size(50, 23);
@@ -216,6 +217,7 @@
             this.Tb_DbPassword.PasswordChar = '*';
             this.Tb_DbPassword.Size = new System.Drawing.Size(163, 23);
             this.Tb_DbPassword.TabIndex = 15;
+            this.Tb_DbPassword.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Tb_DbPassword_KeyDown);
             // 
             // Btn_InsertDbPassword
             // 
@@ -237,7 +239,7 @@
             this.Controls.Add(this.Tb_DbPassword);
             this.Controls.Add(this.Cb_Trace);
             this.Controls.Add(this.Btn_SearchLog);
-            this.Controls.Add(this.Tb_Search);
+            this.Controls.Add(this.Tb_SearchLog);
             this.Controls.Add(this.Cb_Critical);
             this.Controls.Add(this.Cb_Error);
             this.Controls.Add(this.Cb_Warning);
@@ -270,7 +272,7 @@
         private CheckBox Cb_Warning;
         private CheckBox Cb_Error;
         private CheckBox Cb_Critical;
-        private TextBox Tb_Search;
+        private TextBox Tb_SearchLog;
         private Button Btn_SearchLog;
         private CheckBox Cb_Trace;
         private BindingSource logBindingSource1;

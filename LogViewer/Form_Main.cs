@@ -28,7 +28,7 @@ namespace LogViewer
         {
             if (conn != null && conn.State == ConnectionState.Open)
             {
-                Search();
+                SearchLog();
             }
         }
 
@@ -42,7 +42,7 @@ namespace LogViewer
             Cb_Warning.Enabled = false;
             Cb_Error.Enabled = false;
             Cb_Critical.Enabled = false;
-            Tb_Search.Enabled = false;
+            Tb_SearchLog.Enabled = false;
             Btn_SearchLog.Enabled = false;
             Dgv_Log.Enabled = false;
         }
@@ -57,12 +57,12 @@ namespace LogViewer
             Cb_Warning.Enabled = true;
             Cb_Error.Enabled = true;
             Cb_Critical.Enabled = true;
-            Tb_Search.Enabled = true;
+            Tb_SearchLog.Enabled = true;
             Btn_SearchLog.Enabled = true;
             Dgv_Log.Enabled = true;
         }
 
-        private void Search()
+        private void SearchLog()
         {
             string startTime = Dtp_StartTime.Value.ToString(Constants.timeFormat);
             string endTime = Dtp_EndTime.Value.ToString(Constants.timeFormat);
@@ -75,7 +75,7 @@ namespace LogViewer
             if (Cb_Error.Checked) levels.Add("E");
             if (Cb_Critical.Checked) levels.Add("C");
 
-            string keyword = Tb_Search.Text.Trim();
+            string keyword = Tb_SearchLog.Text.Trim();
 
             string timeStmt = GetTimeStmt(startTime, endTime);
             string keywordStmt = GetKeywordStmt(keyword);
@@ -117,7 +117,7 @@ namespace LogViewer
                 {
                     DataRow dr = dt.NewRow();
                     dr[Constants.labelTime] = log.Timestamp;
-                    dr[Constants.labelLevel] = getFullLevel(log.Level);
+                    dr[Constants.labelLevel] = GetFullLevel(log.Level);
                     dr[Constants.labelContent] = log.Message;
                     dt.Rows.Add(dr);
                 }
@@ -172,53 +172,53 @@ namespace LogViewer
                 Dtp_StartTime.Value = DateTime.Now.AddDays(-1);
                 Dtp_EndTime.Value = DateTime.Now;
 
-                Search();
+                SearchLog();
             }
         }
 
         private void Btn_SearchLog_Click(object sender, EventArgs e)
         {
-            Search();
+            SearchLog();
         }
 
         private void Dtp_StartTime_ValueChanged(object sender, EventArgs e)
         {
-            Search();
+            SearchLog();
         }
 
         private void Dtp_EndTime_ValueChanged(object sender, EventArgs e)
         {
-            Search();
+            SearchLog();
         }
 
         private void Cb_Debug_CheckedChanged(object sender, EventArgs e)
         {
-            Search();
+            SearchLog();
         }
 
         private void Cb_Trace_CheckedChanged(object sender, EventArgs e)
         {
-            Search();
+            SearchLog();
         }
 
         private void Cb_Info_CheckedChanged(object sender, EventArgs e)
         {
-            Search();
+            SearchLog();
         }
 
         private void Cb_Warning_CheckedChanged(object sender, EventArgs e)
         {
-            Search();
+            SearchLog();
         }
 
         private void Cb_Error_CheckedChanged(object sender, EventArgs e)
         {
-            Search();
+            SearchLog();
         }
 
         private void Cb_Critical_CheckedChanged(object sender, EventArgs e)
         {
-            Search();
+            SearchLog();
         }
 
         private string GetTimeStmt(string startTime, string endTime)
@@ -258,7 +258,7 @@ namespace LogViewer
             return levelStmt;
         }
 
-        private string getFullLevel(string s)
+        private string GetFullLevel(string s)
         {
             if (s == "T") return "Trace";
             else if (s == "D") return "Debug";
@@ -269,7 +269,7 @@ namespace LogViewer
             else return "????";
         }
 
-        private List<string> getSelectedLogs()
+        private List<string> GetSelectedLogs()
         {
             List<string> logs = new List<string>();
             
@@ -292,7 +292,7 @@ namespace LogViewer
         private void ToolStripMenuItem_Click(object? sender, EventArgs e)
         {
             FormMakeIssue dlg = new FormMakeIssue();
-            dlg.setLogs(getSelectedLogs());
+            dlg.setLogs(GetSelectedLogs());
             dlg.ShowDialog();
 //            throw new NotImplementedException();
         }
@@ -320,6 +320,22 @@ namespace LogViewer
                 toolStripMenuItem.Click += ToolStripMenuItem_Click;
                 menu.Items.Add(toolStripMenuItem);
                 menu.Show(MousePosition);
+            }
+        }
+
+        private void Tb_DbPassword_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                Btn_InsertDbPassword_Click(sender, e);
+            }
+        }
+
+        private void Tb_SearchLog_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                Btn_SearchLog_Click(sender, e);
             }
         }
     }
