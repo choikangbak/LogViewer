@@ -10,7 +10,8 @@
 
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.0.123" />
-    <PackageReference Include="Npgsql" Version="7.0.1" />
+    <PackageReference Include="Google.Apis.Drive.v3" Version="1.59.0.2964" />
+    <PackageReference Include="Npgsql" Version="7.0.2" />
   </ItemGroup>
 
   <ItemGroup>

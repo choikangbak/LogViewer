@@ -12,60 +12,78 @@ namespace LogViewer
 {
     public partial class Form_Main : Form
     {
-        NpgsqlConnection conn;
-        NpgsqlCommand cmd;
-        DataTable dt;
-        string sql;
+        private DatabaseConnector databaseConnector;
+        private LogDataAccess logDataAccess;
 
         public Form_Main()
         {
             InitializeComponent();
-
-            DisableControls();
         }
 
-        private void Form_Main_Load(object sender, EventArgs e)
+        private void Form_Main_Load(object sender, EventArgs e) { }
+
+        private void EnableControls(bool isEnable)
         {
-            if (conn != null && conn.State == ConnectionState.Open)
+            Dtp_StartTime.Enabled = isEnable;
+            Dtp_EndTime.Enabled = isEnable;
+            Cb_Trace.Enabled = isEnable;
+            Cb_Debug.Enabled = isEnable;
+            Cb_Info.Enabled = isEnable;
+            Cb_Warning.Enabled = isEnable;
+            Cb_Error.Enabled = isEnable;
+            Cb_Critical.Enabled = isEnable;
+            Tb_SearchLog.Enabled = isEnable;
+            Btn_SearchLog.Enabled = isEnable;
+            Dgv_Log.Enabled = isEnable;
+        }
+
+        private void Btn_InsertDbPassword_Click(object sender, EventArgs e)
+        {
+            string dbPassword = Tb_DbPassword.Text;
+            
+            string connectionString = string.Format("Host=localhost;Port=5432;Username=postgres;Password={0};Database=postgres;", dbPassword); // remove this later
+
+            databaseConnector = new DatabaseConnector(connectionString);
+
+            NpgsqlConnection connection = databaseConnector.GetConnection();
+
+            try
             {
+                connection.Open();
+            }
+            catch (Exception ex)
+            {
+                connection.Close();
+
+                Console.WriteLine("Error: "+ex.Message);
+
+                MessageBox.Show("Error: 비밀번호가 잘못되었습니다.");
+            }
+
+            if (connection.State == ConnectionState.Open)
+            {
+                connection.Close();
+
+                logDataAccess = new LogDataAccess(connection);
+
+                Tb_DbPassword.Enabled = false;
+                Btn_InsertDbPassword.Enabled = false;
+
+                EnableControls(true);
+
+                Dtp_StartTime.Value = DateTime.Now.AddDays(-1);
+                Dtp_EndTime.Value = DateTime.Now;
+
                 SearchLog();
             }
         }
 
-        void DisableControls()
-        {
-            Dtp_StartTime.Enabled = false;
-            Dtp_EndTime.Enabled = false;
-            Cb_Trace.Enabled = false;
-            Cb_Debug.Enabled = false;
-            Cb_Info.Enabled = false;
-            Cb_Warning.Enabled = false;
-            Cb_Error.Enabled = false;
-            Cb_Critical.Enabled = false;
-            Tb_SearchLog.Enabled = false;
-            Btn_SearchLog.Enabled = false;
-            Dgv_Log.Enabled = false;
-        }
-
-        void EnableControls()
-        {
-            Dtp_StartTime.Enabled = true;
-            Dtp_EndTime.Enabled = true;
-            Cb_Trace.Enabled = true;
-            Cb_Debug.Enabled = true;
-            Cb_Info.Enabled = true;
-            Cb_Warning.Enabled = true;
-            Cb_Error.Enabled = true;
-            Cb_Critical.Enabled = true;
-            Tb_SearchLog.Enabled = true;
-            Btn_SearchLog.Enabled = true;
-            Dgv_Log.Enabled = true;
-        }
-
         private void SearchLog()
         {
-            string startTime = Dtp_StartTime.Value.ToString(Constants.timeFormat);
-            string endTime = Dtp_EndTime.Value.ToString(Constants.timeFormat);
+            EnableControls(false);
+
+            string startTime = Dtp_StartTime.Value.ToString("yyyy-MM-dd HH:mm:ss");
+            string endTime = Dtp_EndTime.Value.ToString("yyyy-MM-dd HH:mm:ss");
 
             List<string> levels = new List<string>();
             if (Cb_Trace.Checked) levels.Add("T");
@@ -77,103 +95,40 @@ namespace LogViewer
 
             string keyword = Tb_SearchLog.Text.Trim();
 
-            string timeStmt = GetTimeStmt(startTime, endTime);
-            string keywordStmt = GetKeywordStmt(keyword);
-            string levelStmt = GetLevelStmt(levels);
+            List<Log> logList = logDataAccess.SearchLog(startTime, endTime, levels, keyword);
 
-            try
-            {
-                /* 
-                conn.Open();
-                sql = string.Format("SELECT * FROM log WHERE {0} {1} {2} ORDER BY timestamp DESC", timeStmt, levelStmt, keywordStmt);
-                cmd = new NpgsqlCommand(sql, conn);
-                dt = new DataTable();
-                dt.Load(cmd.ExecuteReader());
-                conn.Close();
-                Dgv_Log.DataSource = null;
-                Dgv_Log.DataSource = dt;
-                */
+            DataTable logTable = GetLogTable(logList);
 
-                conn.Open();
-                sql = string.Format("SELECT * FROM log WHERE {0} {1} {2} ORDER BY timestamp DESC", timeStmt, levelStmt, keywordStmt);
-                cmd = new NpgsqlCommand(sql, conn);
-                conn.Close();
+            Dgv_Log.DataSource = logTable;
 
-                // Dapper ORM
-                List<Log> logList = conn.Query<Log>(sql).ToList();
-                Console.WriteLine("logList.Count: " + logList.Count); // later to be deleted
+            Dgv_Log.Columns["시간"].Width = 170;
+            Dgv_Log.Columns["레벨"].Width = 80;
+            Dgv_Log.Columns["시간"].DefaultCellStyle.Format = "yyyy-MM-dd HH:mm:ss";
 
-                // binding
-                //var bindingList = new BindingList<Log>(logList);
-                //var source = new BindingSource(bindingList, null);
-                //Dgv_Log.DataSource = source;
-
-                dt = new DataTable();
-                dt.Columns.Add(Constants.labelTime, typeof(DateTime));
-                dt.Columns.Add(Constants.labelLevel, typeof(String));
-                dt.Columns.Add(Constants.labelContent, typeof(String));
-
-                foreach (Log log in logList)
-                {
-                    DataRow dr = dt.NewRow();
-                    dr[Constants.labelTime] = log.Timestamp;
-                    dr[Constants.labelLevel] = GetFullLevel(log.Level);
-                    dr[Constants.labelContent] = log.Message;
-                    dt.Rows.Add(dr);
-                }
-
-                Dgv_Log.DataSource = dt;
-
-                // width
-                Dgv_Log.Columns[Constants.labelTime].Width = 170;
-                Dgv_Log.Columns[Constants.labelLevel].Width = 80;
-
-                // timestamp format
-                Dgv_Log.Columns[Constants.labelTime].DefaultCellStyle.Format = Constants.timeFormat;
-            }
-            catch (Exception ex)
-            {
-                conn.Close();
-                Console.WriteLine("Error: " + ex.Message);
-            }
+            EnableControls(true);
         }
-        private void Btn_InsertDbPassword_Click(object sender, EventArgs e)
+
+        private DataTable GetLogTable(List<Log> logList)
         {
-            string password = Tb_DbPassword.Text;
-            string connectionString = string.Format("Host=localhost;Port=5432;Username=postgres;Password={0};Database=postgres;", password);
-            conn = new NpgsqlConnection(connectionString);
+            DataTable logTable = new DataTable();
+            logTable.Columns.Add("시간", typeof(DateTime));
+            logTable.Columns.Add("레벨", typeof(String));
+            logTable.Columns.Add("내용", typeof(String));
 
-            try
+            Pb_LoadLog.Maximum = logList.Count;
+            for (int i = 0; i < logList.Count; i++)
             {
-                conn.Open();
-            } 
-            catch (Exception ex)
-            {
-                conn.Close();
-                MessageBox.Show("Error: 비밀번호가 잘못되었습니다.");
+                DataRow dr = logTable.NewRow();
+                dr["시간"] = logList[i].Timestamp;
+                dr["레벨"] = GetFullLevel(logList[i].Level);
+                dr["내용"] = logList[i].Message;
+                logTable.Rows.Add(dr);
+
+                Pb_LoadLog.Value = i;
             }
+            Pb_LoadLog.Value = 0;
 
-            if (conn != null && conn.State == ConnectionState.Open)
-            {
-                conn.Close() ;
-                EnableControls();
-
-                // Password textbox and tutton deactivate
-                Tb_DbPassword.Enabled = false;
-                Btn_InsertDbPassword.Enabled = false;
-
-                Cb_Trace.Checked = true;
-                Cb_Debug.Checked = true;
-                Cb_Info.Checked = true;
-                Cb_Warning.Checked = true;
-                Cb_Error.Checked = true;
-                Cb_Critical.Checked = true;
-
-                Dtp_StartTime.Value = DateTime.Now.AddDays(-1);
-                Dtp_EndTime.Value = DateTime.Now;
-
-                SearchLog();
-            }
+            return logTable;
         }
 
         private void Btn_SearchLog_Click(object sender, EventArgs e)
@@ -181,146 +136,36 @@ namespace LogViewer
             SearchLog();
         }
 
-        private void Dtp_StartTime_ValueChanged(object sender, EventArgs e)
+        private string GetFullLevel(string level)
         {
-            SearchLog();
-        }
-
-        private void Dtp_EndTime_ValueChanged(object sender, EventArgs e)
-        {
-            SearchLog();
-        }
-
-        private void Cb_Debug_CheckedChanged(object sender, EventArgs e)
-        {
-            SearchLog();
-        }
-
-        private void Cb_Trace_CheckedChanged(object sender, EventArgs e)
-        {
-            SearchLog();
-        }
-
-        private void Cb_Info_CheckedChanged(object sender, EventArgs e)
-        {
-            SearchLog();
-        }
-
-        private void Cb_Warning_CheckedChanged(object sender, EventArgs e)
-        {
-            SearchLog();
-        }
-
-        private void Cb_Error_CheckedChanged(object sender, EventArgs e)
-        {
-            SearchLog();
-        }
-
-        private void Cb_Critical_CheckedChanged(object sender, EventArgs e)
-        {
-            SearchLog();
-        }
-
-        private string GetTimeStmt(string startTime, string endTime)
-        {
-            string timeStmt = string.Format(" ( timestamp >= '{0}' AND timestamp <= '{1}' ) ", startTime, endTime);
-
-            return timeStmt;
-        }
-
-        private string GetKeywordStmt(string keyword)
-        {
-            string keywordStmt = string.Format(" AND ( message LIKE '%{0}%' ) ", keyword);
-
-            return keywordStmt;
-        }
-
-        private string GetLevelStmt(List<string> levels)
-        {
-            int n = levels.Count;
-
-            if (n == 0)
-            {
-                return " AND level NOT IN ('T', 'D', 'I', 'W', 'E', 'C') ";
-            }
-
-            string levelStmt = " AND ( ";
-            for (int i = 0; i < n; i++)
-            {
-                string level = levels[i];
-
-                levelStmt += string.Format(" level = '{0}' ", level);
-
-                if (i < n - 1) levelStmt += " OR ";
-            }
-            levelStmt += " ) ";
-
-            return levelStmt;
-        }
-
-        private string GetFullLevel(string s)
-        {
-            if (s == "T") return "Trace";
-            else if (s == "D") return "Debug";
-            else if (s == "I") return "Info";
-            else if (s == "W") return "Warning";
-            else if (s == "E") return "Error";
-            else if (s == "C") return "Critical";
-            else return "????";
+            if (level == "T") return "Trace";
+            else if (level == "D") return "Debug";
+            else if (level == "I") return "Info";
+            else if (level == "W") return "Warning";
+            else if (level == "E") return "Error";
+            else if (level == "C") return "Critical";
+            else return "N/A";
         }
 
         private List<string> GetSelectedLogs()
         {
-            List<string> logs = new List<string>();
-            
-            for (int i = 0; i < Dgv_Log.Rows.Count; i++)
+            List<string> logsSelected = new List<string>();
+
+            var selectedRows = Dgv_Log.SelectedRows;
+
+            for (int i = 0; i < selectedRows.Count; i++)
             {
-                var row = Dgv_Log.Rows[i];
-                if (row.Selected)
-                {
-                    string time = row.Cells["시간"].Value.ToString();
-                    string level = row.Cells["레벨"].Value.ToString();
-                    string msg = row.Cells["내용"].Value.ToString();
-                    string log = string.Format("[{0}] [{1}] {2}", time, level, msg);
-                    logs.Add(log);
-                }
+                var selectedRow = Dgv_Log.Rows[selectedRows[i].Index];
+
+                var time = selectedRow.Cells["시간"].Value.ToString();
+                var level = selectedRow.Cells["레벨"].Value.ToString();
+                var message = selectedRow.Cells["내용"].Value.ToString();
+
+                string log = string.Format("[{0}] [{1}] {2}", time, level, message);
+                logsSelected.Add(log);
             }
-            //foreach(string log in logs) Console.WriteLine(log);
-            return logs;
-        }
 
-        private void ToolStripMenuItem_Click(object? sender, EventArgs e)
-        {
-            FormMakeIssue dlg = new FormMakeIssue();
-            dlg.setLogs(GetSelectedLogs());
-            dlg.ShowDialog();
-//            throw new NotImplementedException();
-        }
-
-        private void Dgv_Log_Scroll(object sender, ScrollEventArgs e)
-        {
-            Console.WriteLine("===================================");
-            Console.WriteLine("{0} = {1}", "ScrollOrientation", e.ScrollOrientation);
-            Console.WriteLine("{0} = {1}", "Type", e.Type);
-            Console.WriteLine("{0} = {1}", "NewValue", e.NewValue);
-            Console.WriteLine("{0} = {1}", "OldValue", e.OldValue);
-            Console.WriteLine("Dgv_Log.Rows.Count: " + Dgv_Log.Rows.Count);
-            Console.WriteLine("Dgv_Log.FirstDisplayedScrollingRowIndex: " + Dgv_Log.FirstDisplayedScrollingRowIndex);
-            Console.WriteLine("Dgv_Log.RowCount: " + Dgv_Log.RowCount);
-            Console.WriteLine("Hit the bottom?: " + (Dgv_Log.FirstDisplayedScrollingRowIndex == Dgv_Log.RowCount-1));
-            Console.WriteLine("===================================");
-        }
-
-        private void Dgv_Log_MouseUp(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Right)
-            {
-                ContextMenuStrip menu = new System.Windows.Forms.ContextMenuStrip();
-                ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem("이슈생성");
-                toolStripMenuItem.Click += ToolStripMenuItem_Click;
-                menu.Items.Add(toolStripMenuItem);
-                menu.Show(MousePosition);
-            }
+            return logsSelected;
         }
 
         private void Tb_DbPassword_KeyDown(object sender, KeyEventArgs e)
@@ -336,6 +181,29 @@ namespace LogViewer
             if (e.KeyCode == Keys.Enter)
             {
                 Btn_SearchLog_Click(sender, e);
+            }
+        }
+
+        private void Tsmi_ReportIssue_Click(object sender, EventArgs e)
+        {
+            Form_IssueReporter form_IssueReporter = new Form_IssueReporter();
+
+            List<string> logsSelected = GetSelectedLogs();
+
+            form_IssueReporter.SetLogs(logsSelected);
+            form_IssueReporter.ShowDialog();
+        }
+
+        private void Dgv_Log_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                ContextMenuStrip contextMenuStrip = new ContextMenuStrip();
+                ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem("이슈 생성");
+
+                toolStripMenuItem.Click += Tsmi_ReportIssue_Click;
+                contextMenuStrip.Items.Add(toolStripMenuItem);
+                contextMenuStrip.Show(MousePosition);
             }
         }
     }
