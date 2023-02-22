@@ -17,11 +17,11 @@ namespace LogViewer
 
         public Log(int id, DateTime timestamp, string level, string message, DateTime created_at) 
         {
-            this.Id = id;
-            this.Timestamp = timestamp;
-            this.Level = level;
-            this.Message = message;
-            this.Created_At = created_at;
+            Id = id;
+            Timestamp = timestamp;
+            Level = level;
+            Message = message;
+            Created_At = created_at;
         }
     }
 }
