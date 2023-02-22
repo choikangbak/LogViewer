@@ -39,7 +39,7 @@ namespace LogViewer
         {
             DriveService service = GetService();
 
-            DateTime now = DateTime.Now;
+            DateTime now = DateTime.Now; // 
             string fileName = now + ""; // later to be changed
             
             var driveFile = new Google.Apis.Drive.v3.Data.File();

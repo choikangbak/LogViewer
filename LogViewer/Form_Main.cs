@@ -7,13 +7,15 @@ using System.Configuration;
 using System.Data;
 using System.Net;
 using System.Text.Json.Nodes;
+using System.Windows.Forms;
 
 namespace LogViewer
 {
     public partial class Form_Main : Form
     {
-        private DatabaseConnector databaseConnector;
-        private LogDataAccess logDataAccess;
+        private DatabaseConnector _databaseConnector;
+        private LogDataAccess _logDataAccess;
+        private List<Log> _logList;
 
         public Form_Main()
         {
@@ -43,9 +45,9 @@ namespace LogViewer
             
             string connectionString = string.Format("Host=localhost;Port=5432;Username=postgres;Password={0};Database=postgres;", dbPassword); // remove this later
 
-            databaseConnector = new DatabaseConnector(connectionString);
+            _databaseConnector = new DatabaseConnector(connectionString);
 
-            NpgsqlConnection connection = databaseConnector.GetConnection();
+            NpgsqlConnection connection = _databaseConnector.GetConnection();
 
             try
             {
@@ -57,14 +59,14 @@ namespace LogViewer
 
                 Console.WriteLine("Error: "+ex.Message);
 
-                MessageBox.Show("Error: 비밀번호가 잘못되었습니다.");
+                MessageBox.Show("비밀번호가 잘못되었습니다.", "메시지 - CLE Inc.", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
 
             if (connection.State == ConnectionState.Open)
             {
                 connection.Close();
 
-                logDataAccess = new LogDataAccess(connection);
+                _logDataAccess = new LogDataAccess(connection);
 
                 Tb_DbPassword.Enabled = false;
                 Btn_InsertDbPassword.Enabled = false;
@@ -95,56 +97,28 @@ namespace LogViewer
 
             string keyword = Tb_SearchLog.Text.Trim();
 
-            List<Log> logList = logDataAccess.SearchLog(startTime, endTime, levels, keyword);
+            List<Log> logList = _logDataAccess.SearchLog(startTime, endTime, levels, keyword);
 
-            DataTable logTable = GetLogTable(logList);
+            Dgv_Log.DataSource = logList;
 
-            Dgv_Log.DataSource = logTable;
+            Dgv_Log.Columns[0].Visible = false;
+            Dgv_Log.Columns[4].Visible = false;
 
-            Dgv_Log.Columns["시간"].Width = 170;
-            Dgv_Log.Columns["레벨"].Width = 80;
-            Dgv_Log.Columns["시간"].DefaultCellStyle.Format = "yyyy-MM-dd HH:mm:ss";
+            Dgv_Log.Columns[1].HeaderText = "시간";
+            Dgv_Log.Columns[2].HeaderText = "레벨";
+            Dgv_Log.Columns[3].HeaderText = "내용";
+
+            Dgv_Log.Columns[1].Width = 170;
+            Dgv_Log.Columns[2].Width = 70;
+
+            Dgv_Log.Columns[1].DefaultCellStyle.Format = "yyyy-MM-dd HH:mm:ss";
 
             EnableControls(true);
-        }
-
-        private DataTable GetLogTable(List<Log> logList)
-        {
-            DataTable logTable = new DataTable();
-            logTable.Columns.Add("시간", typeof(DateTime));
-            logTable.Columns.Add("레벨", typeof(String));
-            logTable.Columns.Add("내용", typeof(String));
-
-            Pb_LoadLog.Maximum = logList.Count;
-            for (int i = 0; i < logList.Count; i++)
-            {
-                DataRow dr = logTable.NewRow();
-                dr["시간"] = logList[i].Timestamp;
-                dr["레벨"] = GetFullLevel(logList[i].Level);
-                dr["내용"] = logList[i].Message;
-                logTable.Rows.Add(dr);
-
-                Pb_LoadLog.Value = i;
-            }
-            Pb_LoadLog.Value = 0;
-
-            return logTable;
         }
 
         private void Btn_SearchLog_Click(object sender, EventArgs e)
         {
             SearchLog();
-        }
-
-        private string GetFullLevel(string level)
-        {
-            if (level == "T") return "Trace";
-            else if (level == "D") return "Debug";
-            else if (level == "I") return "Info";
-            else if (level == "W") return "Warning";
-            else if (level == "E") return "Error";
-            else if (level == "C") return "Critical";
-            else return "N/A";
         }
 
         private List<string> GetSelectedLogs()
@@ -156,10 +130,10 @@ namespace LogViewer
             for (int i = 0; i < selectedRows.Count; i++)
             {
                 var selectedRow = Dgv_Log.Rows[selectedRows[i].Index];
-
-                var time = selectedRow.Cells["시간"].Value.ToString();
-                var level = selectedRow.Cells["레벨"].Value.ToString();
-                var message = selectedRow.Cells["내용"].Value.ToString();
+                
+                var time = selectedRow.Cells["timestamp"].Value.ToString();
+                var level = selectedRow.Cells["level"].Value.ToString();
+                var message = selectedRow.Cells["message"].Value.ToString();
 
                 string log = string.Format("[{0}] [{1}] {2}", time, level, message);
                 logsSelected.Add(log);
@@ -190,7 +164,7 @@ namespace LogViewer
 
             List<string> logsSelected = GetSelectedLogs();
 
-            form_IssueReporter.SetLogs(logsSelected);
+            form_IssueReporter.SetLogsSelected(logsSelected);
             form_IssueReporter.ShowDialog();
         }
 

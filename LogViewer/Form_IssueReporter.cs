@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
+﻿using Microsoft.VisualBasic;
+using System.IO;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using static System.Net.WebRequestMethods;
 
@@ -15,137 +9,129 @@ namespace LogViewer
     public partial class Form_IssueReporter : Form
     {
         private List<string> _logsSelected;
-        private List<string> _files; // 
+        private List<File> _filesSelected; 
 
         public Form_IssueReporter()
         {
             InitializeComponent();
         }
 
-        private void Btn_OpenFile_Click(object sender, EventArgs e)
+        private void Form_IssueReporter_Load(object sender, EventArgs e) { }
+
+        private void EnableControls(bool isEnable)
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Title = "Open Image";
-            openFileDialog.Filter = "Image Files(*.BMP;*.JPG;*.GIF;*.PNG)|*.BMP;*.JPG;*.GIF;*.PNG|All files (*.*)|*.*";
-            if (openFileDialog.ShowDialog() == DialogResult.OK)
-            {
-                if (openFileDialog.FileName.Length > 0)
-                {
-                    foreach(string s in openFileDialog.FileNames)
-                    {
-                        this.Tb_Attachment.Text = s;
-                        _files = new List<string>();
-                        _files.Add(s); //
-                    }
-                }
-            }
+            Tb_IssueTitle.Enabled = isEnable;
+            Tb_IssueContent.Enabled = isEnable;
+            Tb_IssueLog.Enabled = isEnable;
+            Tb_Attachment.Enabled = isEnable;
+            Btn_AttachFile.Enabled = isEnable;
+            Btn_ReportIssue.Enabled = isEnable;
+            Btn_CancelReportIssue.Enabled = isEnable;
         }
 
+        private void Btn_OpenFile_Click(object sender, EventArgs e)
+        {
+            using (OpenFileDialog openFileDialog = new OpenFileDialog())
+            {
+                openFileDialog.Filter = "Image Files(*.BMP;*.JPG;*.GIF;*.PNG)|*.BMP;*.JPG;*.GIF;*.PNG|All files (*.*)|*.*";
+                openFileDialog.Title = "Open file";
+                openFileDialog.Multiselect = true;
 
-        public void SetLogs(List<string> logsSelected)
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    var filePaths = openFileDialog.FileNames;
+
+                    _filesSelected = new List<File>();
+
+                    for (int i = 0; i < filePaths.Length; i++)
+                    {
+                        string filePath = openFileDialog.FileNames[i];
+                        string fileName = Path.GetFileNameWithoutExtension(filePath);
+                        string fileExtension = Path.GetExtension(filePath);
+
+                        File file = new File(filePath, fileName, fileExtension);
+
+                        _filesSelected.Add(file);
+
+                        Tb_Attachment.Text = filePath;
+                    }
+                }
+            } 
+        }
+
+        public void SetLogsSelected(List<string> logsSelected)
         {
             _logsSelected = logsSelected;
 
-            this.Tb_IssueLog.Text = "";
-            foreach (string log in logsSelected)
+            DisplayLogsSelected();
+        }
+
+        private void DisplayLogsSelected()
+        {
+            Tb_IssueLog.Text = "";
+
+            for (int i = 0; i < _logsSelected.Count; i++)
             {
-                this.Tb_IssueLog.Text += log + "\r\n";
+                Tb_IssueLog.Text += _logsSelected[i] + "\r\n";
+            }
+        }
+
+        private void Btn_ReportIssue_Click(object sender, EventArgs e)
+        {
+            if (Tb_IssueTitle.Text.Trim().Length == 0 || 
+                Tb_IssueContent.Text.Trim().Length == 0)
+            {
+                MessageBox.Show("제목과 내용을 모두 입력해주세요.", "메시지 - CLE Inc.", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
+            else
+            {
+                EnableControls(false);
+
+                string issueTitle = Tb_IssueTitle.Text;
+                string issueContent = Tb_IssueContent.Text;
+
+                SendIssue2Notion(issueTitle, issueContent);
+                SendIssue2Slack(issueTitle, issueContent);
+
+                this.Close();
             }
         }
 
         private void SendIssue2Notion(string issueTitle, string issueContent)
         {
             var httpWebRequest = (HttpWebRequest)WebRequest.Create("https://api.notion.com/v1/pages");
-            const string authToken = "secret_0dhSZOLiOJagsBigLH9ok1C0PlBaAGesjCdNOBcCoOp";
-            const string notionVersion = "2022-02-22";
-            httpWebRequest.Headers.Add("Authorization", authToken);
-            httpWebRequest.Headers.Add("Notion-Version", notionVersion);
             httpWebRequest.ContentType = "application/json";
             httpWebRequest.Method = "POST";
 
-//            const string databaseId = Constants.notionDbId;
-            string parent = "\"parent\":{\"database_id\":\"" + Constants.notionDbId + "\"}";
+            httpWebRequest.Headers.Add("Authorization", "secret_0dhSZOLiOJagsBigLH9ok1C0PlBaAGesjCdNOBcCoOp");
+            httpWebRequest.Headers.Add("Notion-Version", "2022-02-22");
 
-            string icon = "\"icon\":{\"emoji\":\"📢\"}";
-
-            string properties_title = "\"Title\":{\"title\":[{\"text\":{\"content\":\"" + issueTitle + "\"}}]}";
-            string properties_content = "\"Content\":{\"type\":\"rich_text\",\"rich_text\":[{\"type\":\"text\",\"text\":{\"content\":\"" + issueContent + "\"}}]}";
-            string properties_status = "\"Status\":{\"type\":\"select\",\"select\":{\"name\":\"NotinProgress\",\"color\":\"red\"}}";
-
-            string properties_image = "";
-            if (_files.Count > 0)
-            {
-                List<string> images = new List<string>();
-                foreach (string file in _files)
-                {
-                    FileUploader uploader = new FileUploader();
-                    var service = uploader.GetService();
-                    string image = uploader.UploadFile(file, "image/"+file[^3..], Constants.directoryId);
-                    images.Add(image);
-                }
-
-                properties_image += "\"Image\":{\"type\":\"files\",\"files\":[";
-                for (int j = 0; j < images.Count; j++)
-                {
-                    var image = images[j];
-                    properties_image += "{\"name\":\"" + image + "\",\"type\":\"external\",\"external\":{\"url\":\"https://drive.google.com/file/d/" + image + "\"}}";
-
-                    if (j < images.Count - 1) properties_image += ",";
-                    if (j == images.Count - 1) properties_image += "]}";
-                }
-            }
-
-            string properties = "\"properties\":{" + properties_title + "," + properties_content + "," + properties_status + "," + properties_image + "}";
-
-            string child_heading2_log = "{\"object\":\"block\",\"type\":\"heading_2\",\"heading_2\":{\"rich_text\":[{\"type\":\"text\",\"text\":{\"content\":\"" + "관련된 로그(들)" + "\"}}]}}";
-            string children = "\"children\":[" + child_heading2_log + ",";
-            for (int i = 0; i < _logsSelected.Count; i++)
-            {
-                var logSelected = _logsSelected[i];
-                children += "{\"object\":\"block\",\"type\":\"bulleted_list_item\",\"bulleted_list_item\":{\"rich_text\":[{\"type\":\"text\",\"text\":{\"content\":\"" + logSelected + "\"}}]}}";
-
-                if (i < _logsSelected.Count - 1) children += ",";
-                if (i == _logsSelected.Count - 1) children += "]";
-            }
-            string json = "{" + parent + "," + icon + "," + properties + "," + children + "}";
+            string json = GetNotionHttpRequestBody(issueTitle, issueContent);
 
             using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
             {
                 streamWriter.Write(json);
-                Console.WriteLine(json);
+                streamWriter.Flush();
+                streamWriter.Close();
             }
 
             var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
             using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
             {
                 var result = streamReader.ReadToEnd();
-                Console.WriteLine(result);
             }
         }
 
-        private void Btn_ReportIssue_Click(object sender, EventArgs e)
+        private void SendIssue2Slack(string issueTitle, string issueContent)
         {
-            string title = this.Tb_IssueTitle.Text;
-            string content = this.Tb_IssueContent.Text;
-            // get image
-            string[] files = openFileDlg.FileNames;
-
-            SendIssue2Notion(title, content);
-            SendIssue2Slack(Constants.urlSlack, GetSlackMessage(title, content));
-
-            this.Close();
-        }
-
-        private void SendIssue2Slack(string URL, string message)
-        {
-            var httpWebRequest = (HttpWebRequest)WebRequest.Create(URL);
+            var httpWebRequest = (HttpWebRequest)WebRequest.Create("https://hooks.slack.com/services/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");
             httpWebRequest.ContentType = "text/json";
             httpWebRequest.Method = "POST";
 
+            string json = GetSlackHttpRequestBody(issueTitle, issueContent);
+
             using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
             {
-                string json = "{\"text\":\"" + message + "\"}";
-
                 streamWriter.Write(json);
                 streamWriter.Flush();
                 streamWriter.Close();
@@ -154,28 +140,71 @@ namespace LogViewer
                 using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
                 {
                     var result = streamReader.ReadToEnd();
-                    Console.WriteLine("slack send "+result);
                 }
             }
         }
 
-        private string GetSlackMessage(string title, string contents, string urlNotion=Constants.urlIssueNotion)
+        private string GetNotionHttpRequestBody(string issueTitle, string issueContent)
         {
-            return "*** 이슈 생성 ***\n 제목 : " + title + "\n 내용 : " + contents + "\n\nIssue Tracker : " + urlNotion;
+            string parent = "\"parent\":{\"database_id\":\"" + "337d9b78209b442185cccb11ba028dc4" + "\"}";
+
+            string icon = "\"icon\":{\"emoji\":\"📢\"}";
+
+            string properties_title = "\"Title\":{\"title\":[{\"text\":{\"content\":\"" + issueTitle + "\"}}]}";
+            string properties_content = "\"Content\":{\"type\":\"rich_text\",\"rich_text\":[{\"type\":\"text\",\"text\":{\"content\":\"" + issueContent + "\"}}]}";
+            string properties_status = "\"Status\":{\"type\":\"select\",\"select\":{\"name\":\"Not in Progress\",\"color\":\"red\"}}";
+            string properties_image = "";
+            if (_filesSelected != null)
+            {
+                properties_image += ",";
+
+                List<string> images = new List<string>();
+
+                for (int i = 0; i < _filesSelected.Count; i++)
+                {
+                    FileUploader uploader = new FileUploader();
+
+                    var service = uploader.GetService();
+
+                    var image = uploader.UploadFile(_filesSelected[i].FilePath, "image/" + _filesSelected[i].FileExtension, "11RQP2w8HdhlB3PdkbDSjFdMn8wogqGO2");
+                    images.Add(image);
+                }
+
+                properties_image += "\"Image\":{\"type\":\"files\",\"files\":[";
+                for (int j = 0; j < images.Count; j++)
+                {
+                    properties_image += "{\"name\":\"" + _filesSelected[j].FileName + "\",\"type\":\"external\",\"external\":{\"url\":\"https://drive.google.com/file/d/" + images[j] + "\"}}";
+
+                    if (j < images.Count - 1) properties_image += ",";
+                }
+                properties_image += "]}";
+            }
+            string properties = "\"properties\":{" + properties_title + "," + properties_content + "," + properties_status + properties_image + "}";
+
+            string children = "\"children\":[" + "{\"object\":\"block\",\"type\":\"heading_2\",\"heading_2\":{\"rich_text\":[{\"type\":\"text\",\"text\":{\"content\":\"" + "관련된 로그(들)" + "\"}}]}}";
+            if (_logsSelected.Count > 0)
+            {
+                children += ",";
+                for (int i = 0; i < _logsSelected.Count; i++)
+                {
+                    children += "{\"object\":\"block\",\"type\":\"bulleted_list_item\",\"bulleted_list_item\":{\"rich_text\":[{\"type\":\"text\",\"text\":{\"content\":\"" + _logsSelected[i] + "\"}}]}}";
+
+                    if (i < _logsSelected.Count - 1) children += ",";
+                }
+                children += "]";
+            }
+
+            string json = "{" + parent + "," + icon + "," + properties + "," + children + "}";
+
+            return json;
         }
 
-    }
-}
+        private string GetSlackHttpRequestBody(string issueTitle, string issueContent, string issueTrackerUrl="https://www.notion.so/337d9b78209b442185cccb11ba028dc4?v=dda35a4831034c02bd1c5100e9d5abe6")
+        { 
+            string json = "{\"text\":\"*** 새로운 이슈 ***\n제목: " + issueTitle + "\n내용: " + issueContent + "\n\n이슈 링크: \n" + issueTrackerUrl + "\"}";
 
-static class Constants
-{
-    public const string urlIssueNotion = "https://www.notion.so/clevision/8651a74e9c344c67bd8407272d31664c?v=1f1718363a4a4823b5ba3e8afd1ae86c";
-    public const string notionDbId = "337d9b78209b442185cccb11ba028dc4";
-    public const string urlSlack = "https://hooks.slack.com/services/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";
-    public const string labelTime = "시간";
-    public const string labelLevel = "레벨";
-    public const string labelContent = "내용";
-    public const string timeFormat = "yyyy-MM-dd HH:mm:ss";
-    public const string directoryId = "11RQP2w8HdhlB3PdkbDSjFdMn8wogqGO2";
+            return json;
+        }
+    }
 }
 

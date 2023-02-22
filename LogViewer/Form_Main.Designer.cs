@@ -256,6 +256,8 @@
             this.Controls.Add(this.Dtp_StartTime);
             this.Controls.Add(this.Dgv_Log);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximumSize = new System.Drawing.Size(1036, 676);
+            this.MinimumSize = new System.Drawing.Size(1036, 676);
             this.Name = "Form_Main";
             this.Text = "로그 뷰어 - CLE Inc.";
             this.Load += new System.EventHandler(this.Form_Main_Load);
