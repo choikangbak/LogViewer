@@ -11,11 +11,11 @@ namespace LogViewer
     {
         public int Id { get; set; }
         public DateTime Timestamp { get; set; }
-        public string Level { get; set; }
+        public Level Level { get; set; }
         public string Message { get; set; }
         public DateTime Created_At { get; set; }
 
-        public Log(int id, DateTime timestamp, string level, string message, DateTime created_at) 
+        public Log(int id, DateTime timestamp, Level level, string message, DateTime created_at) 
         {
             Id = id;
             Timestamp = timestamp;
@@ -24,4 +24,6 @@ namespace LogViewer
             Created_At = created_at;
         }
     }
+
+    public enum Level { T, D, I, W, E, C }; // later to be changed to { Trace, Debug, Info, Warning, Error, Critical }
 }

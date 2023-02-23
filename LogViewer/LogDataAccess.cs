@@ -23,7 +23,7 @@ namespace LogViewer
             {
                 _connection.Open();
 
-                string sql = string.Format("SELECT * FROM log WHERE {0} {1} {2} ORDER BY timestamp DESC",
+                string sql = string.Format("SELECT id, timestamp, level, message, created_at FROM log WHERE {0} {1} {2} ORDER BY timestamp DESC",
                                             GetTimeStatement(startTime, endTime),
                                             GetLevelStatement(levels),
                                             GetKeywordStatement(keyword));
@@ -38,7 +38,7 @@ namespace LogViewer
             {
                 _connection.Close();
 
-                Console.WriteLine("Error "+ex.Message);
+                Console.WriteLine("Error: "+ex.Message);
 
                 return new List<Log> { };
             }
