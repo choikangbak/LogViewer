@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,16 +18,16 @@ namespace LogViewer
 {
     public class FileUploader
     {
-        private const string serviceAccountCredentialPath = @"C:\enhanced-victor-378408-070c7f6dbe72.json";
-        private const string ServiceAccountEmail = "test-999@enhanced-victor-378408.iam.gserviceaccount.com";
-        private const string UploadFilePath = @"C:\Users\jun_c\Downloads\logo_mark_square.png";
-        private const string UploadFileName = "클레";
-        private const string mime = "image/png";
-        private const string DirectoryId = "11RQP2w8HdhlB3PdkbDSjFdMn8wogqGO2";
+        private readonly NameValueCollection _appSettings;
+
+        public FileUploader() 
+        {
+            _appSettings = ConfigurationManager.AppSettings;
+        }
 
         public DriveService GetService()
         {
-            var credential = GoogleCredential.FromFile(serviceAccountCredentialPath).CreateScoped(DriveService.ScopeConstants.Drive);
+            var credential = GoogleCredential.FromFile(_appSettings["GoogleDriveCredentialFilePath"]).CreateScoped(DriveService.ScopeConstants.Drive);
 
             var service = new DriveService(new BaseClientService.Initializer()
             {
@@ -35,19 +37,20 @@ namespace LogViewer
             return service;
         }
 
-        public string UploadFile(string filePath, string fileMime, string folderId)
+        public string UploadFile(File file)
         {
             DriveService service = GetService();
 
-            DateTime now = DateTime.Now; // 
-            string fileName = now + ""; // later to be changed
-            
+            string fileName = file.FileName + "(" + DateTime.Now + ")"; 
+            string fileMime = "image/" + file.FileExtension;
+
+
             var driveFile = new Google.Apis.Drive.v3.Data.File();
                     driveFile.Name = fileName; // this should be time + name
                     driveFile.MimeType = fileMime;
-                    driveFile.Parents = new string[] { folderId };
+                    driveFile.Parents = new string[] { _appSettings["GoogleDriveFolderId"] };
 
-            var fsSource = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+            var fsSource = new FileStream(file.FilePath, FileMode.Open, FileAccess.Read);
 
             var request = service.Files.Create(driveFile, fsSource, fileMime);
             request.Fields = "*";

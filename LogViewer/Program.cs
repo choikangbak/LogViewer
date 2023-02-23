@@ -1,3 +1,5 @@
+using System.Configuration;
+
 namespace LogViewer
 {
     internal static class Program

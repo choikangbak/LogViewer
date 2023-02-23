@@ -38,7 +38,7 @@ namespace LogViewer
             {
                 _connection.Close();
 
-                Console.WriteLine("Error: "+ex.Message);
+                Console.WriteLine("Error "+ex.Message);
 
                 return new List<Log> { };
             }

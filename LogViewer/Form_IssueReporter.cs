@@ -1,4 +1,6 @@
 ﻿using Microsoft.VisualBasic;
+using System.Collections.Specialized;
+using System.Configuration;
 using System.IO;
 using System.Net;
 using System.Windows.Forms;
@@ -9,11 +11,13 @@ namespace LogViewer
     public partial class Form_IssueReporter : Form
     {
         private List<string> _logsSelected;
-        private List<File> _filesSelected; 
+        private List<File> _filesSelected;
+        private readonly NameValueCollection _appSettings;
 
         public Form_IssueReporter()
         {
             InitializeComponent();
+            _appSettings = ConfigurationManager.AppSettings;
         }
 
         private void Form_IssueReporter_Load(object sender, EventArgs e) { }
@@ -99,12 +103,12 @@ namespace LogViewer
 
         private void SendIssue2Notion(string issueTitle, string issueContent)
         {
-            var httpWebRequest = (HttpWebRequest)WebRequest.Create("https://api.notion.com/v1/pages");
+            var httpWebRequest = (HttpWebRequest)WebRequest.Create(_appSettings["NotionApiUrl"]);
             httpWebRequest.ContentType = "application/json";
             httpWebRequest.Method = "POST";
 
-            httpWebRequest.Headers.Add("Authorization", "secret_0dhSZOLiOJagsBigLH9ok1C0PlBaAGesjCdNOBcCoOp");
-            httpWebRequest.Headers.Add("Notion-Version", "2022-02-22");
+            httpWebRequest.Headers.Add("Authorization", _appSettings["NotionAuthorization"]);
+            httpWebRequest.Headers.Add("Notion-Version", _appSettings["NotionVersion"]);
 
             string json = GetNotionHttpRequestBody(issueTitle, issueContent);
 
@@ -124,7 +128,7 @@ namespace LogViewer
 
         private void SendIssue2Slack(string issueTitle, string issueContent)
         {
-            var httpWebRequest = (HttpWebRequest)WebRequest.Create("https://hooks.slack.com/services/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");
+            var httpWebRequest = (HttpWebRequest)WebRequest.Create(_appSettings["SlackApiUrl"]);
             httpWebRequest.ContentType = "text/json";
             httpWebRequest.Method = "POST";
 
@@ -140,13 +144,14 @@ namespace LogViewer
                 using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
                 {
                     var result = streamReader.ReadToEnd();
+                    Console.WriteLine(result);
                 }
             }
         }
 
         private string GetNotionHttpRequestBody(string issueTitle, string issueContent)
         {
-            string parent = "\"parent\":{\"database_id\":\"" + "337d9b78209b442185cccb11ba028dc4" + "\"}";
+            string parent = "\"parent\":{\"database_id\":\"" + _appSettings["NotionDatabaseId"] + "\"}";
 
             string icon = "\"icon\":{\"emoji\":\"📢\"}";
 
@@ -166,7 +171,8 @@ namespace LogViewer
 
                     var service = uploader.GetService();
 
-                    var image = uploader.UploadFile(_filesSelected[i].FilePath, "image/" + _filesSelected[i].FileExtension, "11RQP2w8HdhlB3PdkbDSjFdMn8wogqGO2");
+                    var image = uploader.UploadFile(_filesSelected[i]);
+
                     images.Add(image);
                 }
 
@@ -199,9 +205,9 @@ namespace LogViewer
             return json;
         }
 
-        private string GetSlackHttpRequestBody(string issueTitle, string issueContent, string issueTrackerUrl="https://www.notion.so/337d9b78209b442185cccb11ba028dc4?v=dda35a4831034c02bd1c5100e9d5abe6")
+        private string GetSlackHttpRequestBody(string issueTitle, string issueContent)
         { 
-            string json = "{\"text\":\"*** 새로운 이슈 ***\n제목: " + issueTitle + "\n내용: " + issueContent + "\n\n이슈 링크: \n" + issueTrackerUrl + "\"}";
+            string json = "{\"text\":\"*** 새로운 이슈 ***\n제목: " + issueTitle + "\n내용: " + issueContent + "\n\n이슈 링크: \n" + _appSettings["SlackIssueTrackerUrl"] + "\"}";
 
             return json;
         }
