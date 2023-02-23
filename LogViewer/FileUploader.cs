@@ -45,10 +45,10 @@ namespace LogViewer
                 DriveService service = GetService();
 
                 string fileName = file.FileName + "[" + DateTime.Now + "]";
-                string fileMime = "image/" + file.FileExtension;
+                string fileMime = file.FileMime; 
 
                 var driveFile = new Google.Apis.Drive.v3.Data.File();
-                driveFile.Name = fileName; // this should be time + name
+                driveFile.Name = fileName;
                 driveFile.MimeType = fileMime;
                 driveFile.Parents = new string[] { _appSettings["GoogleDriveFolderId"] };
 

@@ -8,15 +8,17 @@ namespace LogViewer
 {
     public class File
     {
-        public string FilePath;
-        public string FileName;
-        public string FileExtension;
+        public string FilePath { get; set; }
+        public string FileName { get; set; }
+        public string FileExtension { get; set; }
+        public string FileMime { get; set; }
 
-        public File(string filePath, string fileName, string fileExtension) 
+        public File(string filePath, string fileName, string fileExtension, string fileMime) 
         {
             FilePath = filePath;
             FileName = fileName;
             FileExtension = fileExtension;
+            FileMime = fileMime;
         }
     }
 }

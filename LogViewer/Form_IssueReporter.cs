@@ -1,4 +1,6 @@
-﻿using Microsoft.VisualBasic;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.StaticFiles;
+using Microsoft.VisualBasic;
 using System.Collections.Specialized;
 using System.Configuration;
 using System.Globalization;
@@ -13,6 +15,7 @@ namespace LogViewer
 {
     public partial class Form_IssueReporter : Form
     {
+        private FileExtensionContentTypeProvider _fileExtensionContentTypeProvider;
         private readonly NameValueCollection _appSettings;
         private FileUploader _fileUploader;
         private List<string> _logsSelected;
@@ -22,8 +25,9 @@ namespace LogViewer
         public Form_IssueReporter()
         {
             InitializeComponent();
+            _fileExtensionContentTypeProvider = new FileExtensionContentTypeProvider();
             _appSettings = ConfigurationManager.AppSettings;
-            _fileUploader= new FileUploader();
+            _fileUploader = new FileUploader();
             _logsSelected = new List<string>(); 
             _filesSelected = new List<File>();
             _fileIdList = new List<string>();
@@ -65,8 +69,9 @@ namespace LogViewer
                         string filePath = openFileDialog.FileNames[i];
                         string fileName = Path.GetFileNameWithoutExtension(filePath);
                         string fileExtension = Path.GetExtension(filePath);
+                        _fileExtensionContentTypeProvider.TryGetContentType(filePath, out string fileMime);
 
-                        File file = new File(filePath, fileName, fileExtension);
+                        File file = new File(filePath, fileName, fileExtension, fileMime);
 
                         _filesSelected.Add(file);
 
