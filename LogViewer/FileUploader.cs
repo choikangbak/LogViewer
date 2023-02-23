@@ -12,6 +12,7 @@ using Google.Apis.Drive.v3;
 using Google.Apis.Services;
 using Google.Apis.Upload;
 using Google.Apis.Util.Store;
+using Newtonsoft.Json;
 using static Google.Apis.Drive.v3.DriveService;
 
 namespace LogViewer
@@ -39,37 +40,52 @@ namespace LogViewer
 
         public string UploadFile(File file)
         {
-            DriveService service = GetService();
-
-            string fileName = file.FileName + "(" + DateTime.Now + ")"; 
-            string fileMime = "image/" + file.FileExtension;
-
-
-            var driveFile = new Google.Apis.Drive.v3.Data.File();
-                    driveFile.Name = fileName; // this should be time + name
-                    driveFile.MimeType = fileMime;
-                    driveFile.Parents = new string[] { _appSettings["GoogleDriveFolderId"] };
-
-            var fsSource = new FileStream(file.FilePath, FileMode.Open, FileAccess.Read);
-
-            var request = service.Files.Create(driveFile, fsSource, fileMime);
-            request.Fields = "*";
-
-            var response = request.Upload();
-
-            if (response.Status == UploadStatus.Failed)
+            try
             {
-                Console.WriteLine($"Error uploading file: {response.Exception.Message}");
-            }
+                DriveService service = GetService();
 
-            return request.ResponseBody.Id;
+                string fileName = file.FileName + "[" + DateTime.Now + "]";
+                string fileMime = "image/" + file.FileExtension;
+
+                var driveFile = new Google.Apis.Drive.v3.Data.File();
+                driveFile.Name = fileName; // this should be time + name
+                driveFile.MimeType = fileMime;
+                driveFile.Parents = new string[] { _appSettings["GoogleDriveFolderId"] };
+
+                var fsSource = new FileStream(file.FilePath, FileMode.Open, FileAccess.Read);
+
+                var request = service.Files.Create(driveFile, fsSource, fileMime);
+                request.Fields = "*";
+
+                var response = request.Upload();
+
+                if (response.Status == UploadStatus.Failed)
+                {
+                    Console.WriteLine($"Error uploading file: {response.Exception.Message}");
+                }
+
+                return request.ResponseBody.Id;
+            } 
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+
+                return string.Empty;
+            }
         }
 
         public void DeleteFile(string fileId)
         {
-            var service = GetService();
-            var command = service.Files.Delete(fileId);
-            var result = command.Execute();
+            try
+            {
+                var service = GetService();
+                var command = service.Files.Delete(fileId);
+                var result = command.Execute();
+            } 
+            catch (Exception ex) 
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+            }
         }
     }
 }

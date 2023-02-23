@@ -13,9 +13,9 @@ namespace LogViewer
 {
     public partial class Form_Main : Form
     {
+        private readonly NameValueCollection _appSettings;
         private DatabaseConnector _databaseConnector;
         private LogDataAccess _logDataAccess;
-        private readonly NameValueCollection _appSettings;
 
         public Form_Main()
         {
@@ -44,7 +44,7 @@ namespace LogViewer
         {
             string dbPassword = Tb_DbPassword.Text;
             
-            string connectionString = _appSettings["ConnectionString"] + "Password=" + dbPassword + ";";
+            string connectionString = ConfigurationManager.ConnectionStrings["Default"] + "Password=" + dbPassword + ";";
 
             _databaseConnector = new DatabaseConnector(connectionString);
 
@@ -58,7 +58,7 @@ namespace LogViewer
             {
                 connection.Close();
 
-                Console.WriteLine("Error: "+ex.Message);
+                Console.WriteLine($"Error: {ex.Message}");
 
                 MessageBox.Show("비밀번호가 잘못되었습니다.", "메시지 - CLE Inc.", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
@@ -88,13 +88,13 @@ namespace LogViewer
             string startTime = Dtp_StartTime.Value.ToString(_appSettings["DateTimeFormat"]);
             string endTime = Dtp_EndTime.Value.ToString(_appSettings["DateTimeFormat"]);
 
-            List<string> levels = new List<string>();
-            if (Cb_Trace.Checked) levels.Add("T");
-            if (Cb_Debug.Checked) levels.Add("D");
-            if (Cb_Info.Checked) levels.Add("I");
-            if (Cb_Warning.Checked) levels.Add("W");
-            if (Cb_Error.Checked) levels.Add("E");
-            if (Cb_Critical.Checked) levels.Add("C");
+            List<string> levels = new List<string>(); // later to be changed to 
+            if (Cb_Trace.Checked) levels.Add("T"); // Trace
+            if (Cb_Debug.Checked) levels.Add("D"); // Debug
+            if (Cb_Info.Checked) levels.Add("I"); // Info
+            if (Cb_Warning.Checked) levels.Add("W"); // Warning
+            if (Cb_Error.Checked) levels.Add("E"); // Error
+            if (Cb_Critical.Checked) levels.Add("C"); // Critical
 
             string keyword = Tb_SearchLog.Text.Trim();
 

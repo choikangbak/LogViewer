@@ -20,5 +20,15 @@ namespace LogViewer
         {
             return new NpgsqlConnection(_connectionString);
         }
+
+        public string GetConnectionString()
+        {
+            return _connectionString;
+        }
+
+        public void SetConnectionString(string connectionString)
+        {
+            _connectionString = connectionString;
+        }
     }
 }
