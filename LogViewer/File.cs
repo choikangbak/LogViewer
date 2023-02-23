@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace LogViewer
 {
-    internal class File
+    public class File
     {
         public string FilePath;
         public string FileName;

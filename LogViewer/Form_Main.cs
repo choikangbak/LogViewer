@@ -15,11 +15,12 @@ namespace LogViewer
     {
         private DatabaseConnector _databaseConnector;
         private LogDataAccess _logDataAccess;
-        private List<Log> _logList;
+        private readonly NameValueCollection _appSettings;
 
         public Form_Main()
         {
             InitializeComponent();
+            _appSettings = ConfigurationManager.AppSettings;
         }
 
         private void Form_Main_Load(object sender, EventArgs e) { }
@@ -43,7 +44,7 @@ namespace LogViewer
         {
             string dbPassword = Tb_DbPassword.Text;
             
-            string connectionString = string.Format("Host=localhost;Port=5432;Username=postgres;Password={0};Database=postgres;", dbPassword); // remove this later
+            string connectionString = _appSettings["ConnectionString"] + "Password=" + dbPassword + ";";
 
             _databaseConnector = new DatabaseConnector(connectionString);
 
@@ -84,8 +85,8 @@ namespace LogViewer
         {
             EnableControls(false);
 
-            string startTime = Dtp_StartTime.Value.ToString("yyyy-MM-dd HH:mm:ss");
-            string endTime = Dtp_EndTime.Value.ToString("yyyy-MM-dd HH:mm:ss");
+            string startTime = Dtp_StartTime.Value.ToString(_appSettings["DateTimeFormat"]);
+            string endTime = Dtp_EndTime.Value.ToString(_appSettings["DateTimeFormat"]);
 
             List<string> levels = new List<string>();
             if (Cb_Trace.Checked) levels.Add("T");
@@ -104,14 +105,14 @@ namespace LogViewer
             Dgv_Log.Columns[0].Visible = false;
             Dgv_Log.Columns[4].Visible = false;
 
-            Dgv_Log.Columns[1].HeaderText = "시간";
-            Dgv_Log.Columns[2].HeaderText = "레벨";
-            Dgv_Log.Columns[3].HeaderText = "내용";
+            Dgv_Log.Columns[1].HeaderText = _appSettings["TimestampHeaderText"];
+            Dgv_Log.Columns[2].HeaderText = _appSettings["LevelHeaderText"];
+            Dgv_Log.Columns[3].HeaderText = _appSettings["MessageHeaderText"];
 
             Dgv_Log.Columns[1].Width = 170;
             Dgv_Log.Columns[2].Width = 70;
 
-            Dgv_Log.Columns[1].DefaultCellStyle.Format = "yyyy-MM-dd HH:mm:ss";
+            Dgv_Log.Columns[1].DefaultCellStyle.Format = _appSettings["DateTimeFormat"];
 
             EnableControls(true);
         }
@@ -131,11 +132,11 @@ namespace LogViewer
             {
                 var selectedRow = Dgv_Log.Rows[selectedRows[i].Index];
                 
-                var time = selectedRow.Cells["timestamp"].Value.ToString();
+                var timestamp = selectedRow.Cells["timestamp"].Value.ToString();
                 var level = selectedRow.Cells["level"].Value.ToString();
                 var message = selectedRow.Cells["message"].Value.ToString();
 
-                string log = string.Format("[{0}] [{1}] {2}", time, level, message);
+                string log = string.Format("[{0}] [{1}] {2}", timestamp, level, message);
                 logsSelected.Add(log);
             }
 

@@ -6,15 +6,12 @@
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>8a3d2ed0-8346-4063-94f1-f5c42cb7f40d</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="App.config" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Dapper" Version="2.0.123" />
-    <PackageReference Include="Google.Apis.Drive.v3" Version="1.59.0.2964" />
+    <PackageReference Include="Google.Apis.Drive.v3" Version="1.60.0.2964" />
     <PackageReference Include="Npgsql" Version="7.0.2" />
   </ItemGroup>
 
