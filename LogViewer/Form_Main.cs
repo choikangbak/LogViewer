@@ -99,7 +99,7 @@ namespace LogViewer
             }
             else if (!isRegularExpression(Tb_SearchLog.Text.Trim()))
             {
-                MessageBox.Show("검색어에는 한글, 영어, 숫자, 공백 및 특수문자('.', '_', '-')만 포함 가능합니다.", "메시지 - CLE Inc.", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBox.Show("특수문자('{}', '\\', '`', '&', '|', '^', ';')는 포함하실 수 없습니다.", "메시지 - CLE Inc.", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
             else
             {
