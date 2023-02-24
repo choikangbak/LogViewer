@@ -229,9 +229,10 @@
             // 
             // Pb_LoadLog
             // 
-            this.Pb_LoadLog.Location = new System.Drawing.Point(838, 603);
+            this.Pb_LoadLog.Location = new System.Drawing.Point(856, 603);
+            this.Pb_LoadLog.MarqueeAnimationSpeed = 0;
             this.Pb_LoadLog.Name = "Pb_LoadLog";
-            this.Pb_LoadLog.Size = new System.Drawing.Size(158, 22);
+            this.Pb_LoadLog.Size = new System.Drawing.Size(140, 22);
             this.Pb_LoadLog.Step = 1;
             this.Pb_LoadLog.TabIndex = 17;
             // 

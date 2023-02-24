@@ -23,7 +23,7 @@ namespace LogViewer
             {
                 _connection.Open();
 
-                string sql = string.Format("SELECT id, timestamp, level, message, created_at FROM log WHERE {0} {1} {2} ORDER BY timestamp DESC",
+                string sql = string.Format("SELECT * FROM log WHERE {0} {1} {2} ORDER BY timestamp DESC",
                                             GetTimeStatement(startTime, endTime),
                                             GetLevelStatement(levels),
                                             GetKeywordStatement(keyword));
@@ -64,7 +64,7 @@ namespace LogViewer
 
             if (n == 0)
             {
-                return " AND level NOT IN ('T', 'D', 'I', 'W', 'E', 'C') ";
+                return " AND level NOT IN ('T', 'D', 'I', 'W', 'E', 'C') "; // later to be ('Trace', 'Debug', 'Info', 'Warning', 'Error', 'Critical')
             }
 
             string levelStmt = " AND ( ";
