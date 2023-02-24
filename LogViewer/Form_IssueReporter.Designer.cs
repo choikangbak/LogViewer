@@ -156,8 +156,10 @@
             // Pb_SendIssue
             // 
             this.Pb_SendIssue.Location = new System.Drawing.Point(485, 529);
+            this.Pb_SendIssue.MarqueeAnimationSpeed = 0;
             this.Pb_SendIssue.Name = "Pb_SendIssue";
             this.Pb_SendIssue.Size = new System.Drawing.Size(100, 23);
+            this.Pb_SendIssue.Step = 1;
             this.Pb_SendIssue.TabIndex = 11;
             // 
             // Form_IssueReporter

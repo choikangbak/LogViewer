@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.VisualBasic;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Configuration;
 using System.Globalization;
 using System.IO;
@@ -16,7 +17,8 @@ namespace LogViewer
     public partial class Form_IssueReporter : Form
     {
         private FileExtensionContentTypeProvider _fileExtensionContentTypeProvider;
-        private readonly NameValueCollection _appSettings;
+        private BackgroundWorker _backgroundWorker;
+        private NameValueCollection _appSettings;
         private FileUploader _fileUploader;
         private List<string> _logsSelected;
         private List<File> _filesSelected;
@@ -26,6 +28,7 @@ namespace LogViewer
         {
             InitializeComponent();
             _fileExtensionContentTypeProvider = new FileExtensionContentTypeProvider();
+            _backgroundWorker = new BackgroundWorker();
             _appSettings = ConfigurationManager.AppSettings;
             _fileUploader = new FileUploader();
             _logsSelected = new List<string>(); 
@@ -59,8 +62,6 @@ namespace LogViewer
                 openFileDialog.Filter = "Image Files(*.BMP;*.JPG;*.GIF;*.PNG)|*.BMP;*.JPG;*.GIF;*.PNG|All files (*.*)|*.*";
                 openFileDialog.Title = "Open file";
                 openFileDialog.Multiselect = true;
-
-                Tb_Attachment.Text = "";
 
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
@@ -101,13 +102,17 @@ namespace LogViewer
             {
                 EnableControls(false);
 
-                string issueTitle = Tb_IssueTitle.Text;
-                string issueContent = Tb_IssueContent.Text;
+                Pb_SendIssue.Style = ProgressBarStyle.Marquee;
+                Pb_SendIssue.MarqueeAnimationSpeed = 100;
 
-                SendIssue2Notion(issueTitle, issueContent);
-                SendIssue2Slack(issueTitle, issueContent);
+                _backgroundWorker.DoWork += Bw_SendIssue2Notion;
+                _backgroundWorker.DoWork += Bw_SendIssue2Slack;
+                _backgroundWorker.RunWorkerCompleted += Bw_SendIssueCompleted;
 
-                this.Close();
+                if (_backgroundWorker.IsBusy != true)
+                {
+                    _backgroundWorker.RunWorkerAsync();
+                }
             }
         }
 
@@ -139,10 +144,14 @@ namespace LogViewer
             Btn_AttachFile.Enabled = isEnable;
             Btn_ReportIssue.Enabled = isEnable;
             Btn_CancelReportIssue.Enabled = isEnable;
+            this.ControlBox = isEnable;
         }
 
-        private void SendIssue2Notion(string issueTitle, string issueContent)
+        private void Bw_SendIssue2Notion(object sender, DoWorkEventArgs e)
         {
+            string issueTitle = Tb_IssueTitle.Text;
+            string issueContent = Tb_IssueContent.Text;
+
             try
             {
                 var httpWebRequest = (HttpWebRequest)WebRequest.Create(_appSettings["NotionApiUrl"]);
@@ -174,8 +183,11 @@ namespace LogViewer
             }
         }
 
-        private void SendIssue2Slack(string issueTitle, string issueContent)
+        private void Bw_SendIssue2Slack(object sender, DoWorkEventArgs e)
         {
+            string issueTitle = Tb_IssueTitle.Text;
+            string issueContent = Tb_IssueContent.Text;
+
             try
             {
                 var httpWebRequest = (HttpWebRequest)WebRequest.Create(_appSettings["SlackApiUrl"]);
@@ -201,6 +213,15 @@ namespace LogViewer
             {
                 Console.WriteLine($"Error: {ex.Message}");
             }
+        }
+
+        private void Bw_SendIssueCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            Pb_SendIssue.MarqueeAnimationSpeed = 0;
+            Pb_SendIssue.Value = 0;
+
+            MessageBox.Show("이슈가 정상적으로 등록되었습니다.", "메시지 - CLE Inc.", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            this.Close();
         }
 
         private string GetNotionHttpRequestBody(string issueTitle, string issueContent)

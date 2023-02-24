@@ -8,19 +8,27 @@ using System.Data;
 using System.Net;
 using System.Text.Json.Nodes;
 using System.Windows.Forms;
+using System.Threading;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using Microsoft.VisualBasic.Devices;
+using System.Collections.Generic;
 
 namespace LogViewer
 {
     public partial class Form_Main : Form
     {
-        private readonly NameValueCollection _appSettings;
+        private BackgroundWorker _backgroundWorker;
+        private NameValueCollection _appSettings;
         private DatabaseConnector _databaseConnector;
         private LogDataAccess _logDataAccess;
+        private List<Log> _logList;
 
         public Form_Main()
         {
             InitializeComponent();
             _appSettings = ConfigurationManager.AppSettings;
+            _backgroundWorker = new BackgroundWorker();
+            _logList = new List<Log>();
         }
 
         private void Form_Main_Load(object sender, EventArgs e) { }
@@ -38,6 +46,7 @@ namespace LogViewer
             Tb_SearchLog.Enabled = isEnable;
             Btn_SearchLog.Enabled = isEnable;
             Dgv_Log.Enabled = isEnable;
+            this.ControlBox = isEnable;
         }
 
         private void Btn_InsertDbPassword_Click(object sender, EventArgs e)
@@ -76,7 +85,7 @@ namespace LogViewer
 
                 Dtp_StartTime.Value = DateTime.Now.AddDays(-1);
                 Dtp_EndTime.Value = DateTime.Now;
-
+                
                 SearchLog();
             }
         }
@@ -85,22 +94,42 @@ namespace LogViewer
         {
             EnableControls(false);
 
+            Pb_LoadLog.Style = ProgressBarStyle.Marquee;
+            Pb_LoadLog.MarqueeAnimationSpeed = 100;
+
+            _backgroundWorker.DoWork += Bw_GetSearchedLog;
+            _backgroundWorker.RunWorkerCompleted += Bw_GetSearchedLogCompleted;
+
+            if (_backgroundWorker.IsBusy != true)
+            {
+                 _backgroundWorker.RunWorkerAsync();
+            }
+        }
+
+        private void Bw_GetSearchedLog(object sender, DoWorkEventArgs e)
+        {
             string startTime = Dtp_StartTime.Value.ToString(_appSettings["DateTimeFormat"]);
             string endTime = Dtp_EndTime.Value.ToString(_appSettings["DateTimeFormat"]);
 
-            List<string> levels = new List<string>(); 
-            if (Cb_Trace.Checked) levels.Add("Trace"); 
-            if (Cb_Debug.Checked) levels.Add("Debug"); 
-            if (Cb_Info.Checked) levels.Add("Info"); 
-            if (Cb_Warning.Checked) levels.Add("Warning"); 
-            if (Cb_Error.Checked) levels.Add("Error"); 
-            if (Cb_Critical.Checked) levels.Add("Critical"); 
+            List<string> levels = new List<string>();
+            if (Cb_Trace.Checked) levels.Add("Trace");
+            if (Cb_Debug.Checked) levels.Add("Debug");
+            if (Cb_Info.Checked) levels.Add("Info");
+            if (Cb_Warning.Checked) levels.Add("Warning");
+            if (Cb_Error.Checked) levels.Add("Error");
+            if (Cb_Critical.Checked) levels.Add("Critical");
 
             string keyword = Tb_SearchLog.Text.Trim();
 
-            List<Log> logList = _logDataAccess.SearchLog(startTime, endTime, levels, keyword);
+            _logList = _logDataAccess.SearchLog(startTime, endTime, levels, keyword);
+        }
 
-            Dgv_Log.DataSource = logList;
+        private void Bw_GetSearchedLogCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            Pb_LoadLog.Style = ProgressBarStyle.Blocks;
+            Pb_LoadLog.Value = 0;
+
+            Dgv_Log.DataSource = _logList;
 
             Dgv_Log.Columns[0].Visible = false;
             Dgv_Log.Columns[4].Visible = false;
