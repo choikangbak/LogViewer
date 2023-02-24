@@ -9,6 +9,7 @@ using System.IO;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using static System.Net.WebRequestMethods;
 
@@ -89,10 +90,17 @@ namespace LogViewer
 
         private void Btn_ReportIssue_Click(object sender, EventArgs e)
         {
-            if (Tb_IssueTitle.Text.Trim().Length == 0 || 
-                Tb_IssueContent.Text.Trim().Length == 0)
+            string issueTitle = Tb_IssueTitle.Text.Trim();
+            string issueContent = Tb_IssueContent.Text.Trim();
+
+            if (issueTitle.Length == 0 ||
+                issueContent.Length == 0)
             {
                 MessageBox.Show("제목과 내용을 모두 입력해주세요.", "메시지 - CLE Inc.", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
+            else if (!isRegularExpression(issueTitle) || !isRegularExpression(issueContent))
+            {
+                MessageBox.Show("제목과 내용에는 한글, 영어, 숫자, 공백 및 특수문자('.', '_', '-')만 포함 가능합니다.", "메시지 - CLE Inc.", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
             else if (!IsConnected2Internet())
             {
@@ -108,11 +116,21 @@ namespace LogViewer
                 _backgroundWorker.DoWork += Bw_SendIssue2Notion;
                 _backgroundWorker.DoWork += Bw_SendIssue2Slack;
                 _backgroundWorker.RunWorkerCompleted += Bw_SendIssueCompleted;
+                _backgroundWorker.RunWorkerAsync();
+            }
+        }
 
-                if (_backgroundWorker.IsBusy != true)
-                {
-                    _backgroundWorker.RunWorkerAsync();
-                }
+        private bool isRegularExpression(string str)
+        {
+            var regex = new Regex(_appSettings["RegularExpression"]);
+
+            if (regex.IsMatch(str))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
             }
         }
 
@@ -150,7 +168,7 @@ namespace LogViewer
         private void Bw_SendIssue2Notion(object sender, DoWorkEventArgs e)
         {
             string issueTitle = Tb_IssueTitle.Text;
-            string issueContent = Tb_IssueContent.Text;
+            string issueContent = Tb_IssueContent.Text; 
 
             try
             {
@@ -174,6 +192,7 @@ namespace LogViewer
                 using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
                 {
                     var result = streamReader.ReadToEnd();
+                    Console.WriteLine($"Result: {result}");
                 }
             }
             catch (Exception ex)
@@ -185,8 +204,8 @@ namespace LogViewer
 
         private void Bw_SendIssue2Slack(object sender, DoWorkEventArgs e)
         {
-            string issueTitle = Tb_IssueTitle.Text;
-            string issueContent = Tb_IssueContent.Text;
+            string issueTitle = Tb_IssueTitle.Text; 
+            string issueContent = Tb_IssueContent.Text; 
 
             try
             {
@@ -206,9 +225,12 @@ namespace LogViewer
                     using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
                     {
                         var result = streamReader.ReadToEnd();
+                        Console.WriteLine($"Result: {result}");
                     }
                 }
-            } 
+
+                MessageBox.Show("이슈가 정상적으로 등록되었습니다.", "메시지 - CLE Inc.", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex.Message}");
@@ -220,7 +242,6 @@ namespace LogViewer
             Pb_SendIssue.MarqueeAnimationSpeed = 0;
             Pb_SendIssue.Value = 0;
 
-            MessageBox.Show("이슈가 정상적으로 등록되었습니다.", "메시지 - CLE Inc.", MessageBoxButtons.OK, MessageBoxIcon.Information);
             this.Close();
         }
 
@@ -309,6 +330,11 @@ namespace LogViewer
             string json = "{\"text\":\"*** 새로운 이슈 ***\n제목: " + issueTitle + "\n내용: " + issueContent + "\n\n이슈 링크: \n" + _appSettings["SlackIssueTrackerUrl"] + "\"}";
 
             return json;
+        }
+
+        private void Btn_CancelReportIssue_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
     }
 }

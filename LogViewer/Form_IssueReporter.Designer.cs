@@ -22,7 +22,6 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form_IssueReporter));
-            this.Btn_ReportIssue = new System.Windows.Forms.Button();
             this.Tb_IssueTitle = new System.Windows.Forms.TextBox();
             this.Lb_IssueTitle = new System.Windows.Forms.Label();
             this.Lb_IssueContent = new System.Windows.Forms.Label();
@@ -32,21 +31,11 @@
             this.Lb_IssueAttachment = new System.Windows.Forms.Label();
             this.openFileDlg = new System.Windows.Forms.OpenFileDialog();
             this.Tb_Attachment = new System.Windows.Forms.TextBox();
-            this.Btn_CancelReportIssue = new System.Windows.Forms.Button();
             this.Btn_AttachFile = new System.Windows.Forms.Button();
             this.Pb_SendIssue = new System.Windows.Forms.ProgressBar();
+            this.Btn_CancelReportIssue = new System.Windows.Forms.Button();
+            this.Btn_ReportIssue = new System.Windows.Forms.Button();
             this.SuspendLayout();
-            // 
-            // Btn_ReportIssue
-            // 
-            this.Btn_ReportIssue.Location = new System.Drawing.Point(201, 529);
-            this.Btn_ReportIssue.Margin = new System.Windows.Forms.Padding(2);
-            this.Btn_ReportIssue.Name = "Btn_ReportIssue";
-            this.Btn_ReportIssue.Size = new System.Drawing.Size(83, 24);
-            this.Btn_ReportIssue.TabIndex = 0;
-            this.Btn_ReportIssue.Text = "이슈 전송";
-            this.Btn_ReportIssue.UseVisualStyleBackColor = true;
-            this.Btn_ReportIssue.Click += new System.EventHandler(this.Btn_ReportIssue_Click);
             // 
             // Tb_IssueTitle
             // 
@@ -63,7 +52,7 @@
             this.Lb_IssueTitle.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.Lb_IssueTitle.Name = "Lb_IssueTitle";
             this.Lb_IssueTitle.Size = new System.Drawing.Size(31, 15);
-            this.Lb_IssueTitle.TabIndex = 2;
+            this.Lb_IssueTitle.TabIndex = 0;
             this.Lb_IssueTitle.Text = "제목";
             // 
             // Lb_IssueContent
@@ -73,7 +62,7 @@
             this.Lb_IssueContent.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.Lb_IssueContent.Name = "Lb_IssueContent";
             this.Lb_IssueContent.Size = new System.Drawing.Size(31, 15);
-            this.Lb_IssueContent.TabIndex = 3;
+            this.Lb_IssueContent.TabIndex = 0;
             this.Lb_IssueContent.Text = "내용";
             // 
             // Tb_IssueContent
@@ -83,7 +72,7 @@
             this.Tb_IssueContent.Multiline = true;
             this.Tb_IssueContent.Name = "Tb_IssueContent";
             this.Tb_IssueContent.Size = new System.Drawing.Size(465, 174);
-            this.Tb_IssueContent.TabIndex = 4;
+            this.Tb_IssueContent.TabIndex = 2;
             // 
             // Lb_IssueLog
             // 
@@ -92,7 +81,7 @@
             this.Lb_IssueLog.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.Lb_IssueLog.Name = "Lb_IssueLog";
             this.Lb_IssueLog.Size = new System.Drawing.Size(31, 15);
-            this.Lb_IssueLog.TabIndex = 5;
+            this.Lb_IssueLog.TabIndex = 0;
             this.Lb_IssueLog.Text = "로그";
             // 
             // Tb_IssueLog
@@ -104,7 +93,7 @@
             this.Tb_IssueLog.ReadOnly = true;
             this.Tb_IssueLog.ScrollBars = System.Windows.Forms.ScrollBars.Both;
             this.Tb_IssueLog.Size = new System.Drawing.Size(465, 138);
-            this.Tb_IssueLog.TabIndex = 6;
+            this.Tb_IssueLog.TabIndex = 3;
             this.Tb_IssueLog.WordWrap = false;
             // 
             // Lb_IssueAttachment
@@ -114,7 +103,7 @@
             this.Lb_IssueAttachment.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.Lb_IssueAttachment.Name = "Lb_IssueAttachment";
             this.Lb_IssueAttachment.Size = new System.Drawing.Size(31, 15);
-            this.Lb_IssueAttachment.TabIndex = 7;
+            this.Lb_IssueAttachment.TabIndex = 0;
             this.Lb_IssueAttachment.Text = "첨부";
             // 
             // openFileDlg
@@ -130,17 +119,7 @@
             this.Tb_Attachment.ReadOnly = true;
             this.Tb_Attachment.ScrollBars = System.Windows.Forms.ScrollBars.Both;
             this.Tb_Attachment.Size = new System.Drawing.Size(465, 64);
-            this.Tb_Attachment.TabIndex = 8;
-            // 
-            // Btn_CancelReportIssue
-            // 
-            this.Btn_CancelReportIssue.Location = new System.Drawing.Point(304, 529);
-            this.Btn_CancelReportIssue.Margin = new System.Windows.Forms.Padding(2);
-            this.Btn_CancelReportIssue.Name = "Btn_CancelReportIssue";
-            this.Btn_CancelReportIssue.Size = new System.Drawing.Size(83, 24);
-            this.Btn_CancelReportIssue.TabIndex = 9;
-            this.Btn_CancelReportIssue.Text = "취소";
-            this.Btn_CancelReportIssue.UseVisualStyleBackColor = true;
+            this.Tb_Attachment.TabIndex = 4;
             // 
             // Btn_AttachFile
             // 
@@ -148,7 +127,7 @@
             this.Btn_AttachFile.Margin = new System.Windows.Forms.Padding(2);
             this.Btn_AttachFile.Name = "Btn_AttachFile";
             this.Btn_AttachFile.Size = new System.Drawing.Size(88, 24);
-            this.Btn_AttachFile.TabIndex = 10;
+            this.Btn_AttachFile.TabIndex = 5;
             this.Btn_AttachFile.Text = "파일 선택";
             this.Btn_AttachFile.UseVisualStyleBackColor = true;
             this.Btn_AttachFile.Click += new System.EventHandler(this.Btn_OpenFile_Click);
@@ -160,18 +139,37 @@
             this.Pb_SendIssue.Name = "Pb_SendIssue";
             this.Pb_SendIssue.Size = new System.Drawing.Size(100, 23);
             this.Pb_SendIssue.Step = 1;
-            this.Pb_SendIssue.TabIndex = 11;
+            this.Pb_SendIssue.TabIndex = 0;
+            // 
+            // Btn_CancelReportIssue
+            // 
+            this.Btn_CancelReportIssue.Location = new System.Drawing.Point(301, 529);
+            this.Btn_CancelReportIssue.Name = "Btn_CancelReportIssue";
+            this.Btn_CancelReportIssue.Size = new System.Drawing.Size(83, 23);
+            this.Btn_CancelReportIssue.TabIndex = 7;
+            this.Btn_CancelReportIssue.Text = "취소";
+            this.Btn_CancelReportIssue.UseVisualStyleBackColor = true;
+            this.Btn_CancelReportIssue.Click += new System.EventHandler(this.Btn_CancelReportIssue_Click);
+            // 
+            // Btn_ReportIssue
+            // 
+            this.Btn_ReportIssue.Location = new System.Drawing.Point(202, 529);
+            this.Btn_ReportIssue.Name = "Btn_ReportIssue";
+            this.Btn_ReportIssue.Size = new System.Drawing.Size(83, 23);
+            this.Btn_ReportIssue.TabIndex = 6;
+            this.Btn_ReportIssue.Text = "이슈 전송";
+            this.Btn_ReportIssue.UseVisualStyleBackColor = true;
+            this.Btn_ReportIssue.Click += new System.EventHandler(this.Btn_ReportIssue_Click);
             // 
             // Form_IssueReporter
             // 
-            this.AcceptButton = this.Btn_CancelReportIssue;
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.CancelButton = this.Btn_CancelReportIssue;
             this.ClientSize = new System.Drawing.Size(597, 565);
+            this.Controls.Add(this.Btn_ReportIssue);
+            this.Controls.Add(this.Btn_CancelReportIssue);
             this.Controls.Add(this.Pb_SendIssue);
             this.Controls.Add(this.Btn_AttachFile);
-            this.Controls.Add(this.Btn_CancelReportIssue);
             this.Controls.Add(this.Tb_Attachment);
             this.Controls.Add(this.Lb_IssueAttachment);
             this.Controls.Add(this.Tb_IssueLog);
@@ -180,7 +178,6 @@
             this.Controls.Add(this.Lb_IssueContent);
             this.Controls.Add(this.Lb_IssueTitle);
             this.Controls.Add(this.Tb_IssueTitle);
-            this.Controls.Add(this.Btn_ReportIssue);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(2);
             this.MaximizeBox = false;
@@ -197,8 +194,6 @@
         }
 
         #endregion
-
-        private Button Btn_ReportIssue;
         private TextBox Tb_IssueTitle;
         private Label Lb_IssueTitle;
         private Label Lb_IssueContent;
@@ -211,5 +206,6 @@
         private Button Btn_CancelReportIssue;
         private Button Btn_AttachFile;
         private ProgressBar Pb_SendIssue;
+        private Button Btn_ReportIssue;
     }
 }

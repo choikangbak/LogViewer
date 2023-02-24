@@ -12,6 +12,7 @@ using System.Threading;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using Microsoft.VisualBasic.Devices;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace LogViewer
 {
@@ -92,17 +93,50 @@ namespace LogViewer
 
         private void SearchLog()
         {
-            EnableControls(false);
-
-            Pb_LoadLog.Style = ProgressBarStyle.Marquee;
-            Pb_LoadLog.MarqueeAnimationSpeed = 100;
-
-            _backgroundWorker.DoWork += Bw_GetSearchedLog;
-            _backgroundWorker.RunWorkerCompleted += Bw_GetSearchedLogCompleted;
-
-            if (_backgroundWorker.IsBusy != true)
+            if (!isWithinTheTimePeriod(Dtp_StartTime.Value))
             {
-                 _backgroundWorker.RunWorkerAsync();
+                MessageBox.Show("72시간 이전의 로그는 조회하실 수 없습니다.", "메시지 - CLE Inc.", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
+            else if (!isRegularExpression(Tb_SearchLog.Text.Trim()))
+            {
+                MessageBox.Show("검색어에는 한글, 영어, 숫자, 공백 및 특수문자('.', '_', '-')만 포함 가능합니다.", "메시지 - CLE Inc.", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
+            else
+            {
+                EnableControls(false);
+
+                Pb_LoadLog.Style = ProgressBarStyle.Marquee;
+                Pb_LoadLog.MarqueeAnimationSpeed = 100;
+
+                _backgroundWorker.DoWork += Bw_GetSearchedLog;
+                _backgroundWorker.RunWorkerCompleted += Bw_GetSearchedLogCompleted;
+                _backgroundWorker.RunWorkerAsync();
+            }
+        }
+
+        private bool isWithinTheTimePeriod(DateTime startTime)
+        {
+            if (startTime >= DateTime.Now.AddDays(-3))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        private bool isRegularExpression(string str)
+        {
+            var regex = new Regex(_appSettings["RegularExpression"]);
+
+            if (regex.IsMatch(str))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
             }
         }
 
