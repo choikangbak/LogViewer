@@ -88,13 +88,13 @@ namespace LogViewer
             string startTime = Dtp_StartTime.Value.ToString(_appSettings["DateTimeFormat"]);
             string endTime = Dtp_EndTime.Value.ToString(_appSettings["DateTimeFormat"]);
 
-            List<string> levels = new List<string>(); // later to be changed to 
-            if (Cb_Trace.Checked) levels.Add("T"); // Trace
-            if (Cb_Debug.Checked) levels.Add("D"); // Debug
-            if (Cb_Info.Checked) levels.Add("I"); // Info
-            if (Cb_Warning.Checked) levels.Add("W"); // Warning
-            if (Cb_Error.Checked) levels.Add("E"); // Error
-            if (Cb_Critical.Checked) levels.Add("C"); // Critical
+            List<string> levels = new List<string>(); 
+            if (Cb_Trace.Checked) levels.Add("Trace"); 
+            if (Cb_Debug.Checked) levels.Add("Debug"); 
+            if (Cb_Info.Checked) levels.Add("Info"); 
+            if (Cb_Warning.Checked) levels.Add("Warning"); 
+            if (Cb_Error.Checked) levels.Add("Error"); 
+            if (Cb_Critical.Checked) levels.Add("Critical"); 
 
             string keyword = Tb_SearchLog.Text.Trim();
 
@@ -109,8 +109,8 @@ namespace LogViewer
             Dgv_Log.Columns[2].HeaderText = _appSettings["LevelHeaderText"];
             Dgv_Log.Columns[3].HeaderText = _appSettings["MessageHeaderText"];
 
-            Dgv_Log.Columns[1].Width = 170;
-            Dgv_Log.Columns[2].Width = 70;
+            Dgv_Log.Columns[1].Width = 150;
+            Dgv_Log.Columns[2].Width = 80;
 
             Dgv_Log.Columns[1].DefaultCellStyle.Format = _appSettings["DateTimeFormat"];
 

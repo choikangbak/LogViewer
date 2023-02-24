@@ -25,5 +25,5 @@ namespace LogViewer
         }
     }
 
-    public enum Level { T, D, I, W, E, C }; // later to be changed to { Trace, Debug, Info, Warning, Error, Critical }
+    public enum Level { Trace, Debug, Info, Warning, Error, Critical }; // later to be changed to { Trace, Debug, Info, Warning, Error, Critical }
 }

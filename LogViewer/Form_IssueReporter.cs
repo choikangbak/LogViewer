@@ -60,6 +60,8 @@ namespace LogViewer
                 openFileDialog.Title = "Open file";
                 openFileDialog.Multiselect = true;
 
+                Tb_Attachment.Text = "";
+
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
                     var filePaths = openFileDialog.FileNames;
@@ -69,13 +71,16 @@ namespace LogViewer
                         string filePath = openFileDialog.FileNames[i];
                         string fileName = Path.GetFileNameWithoutExtension(filePath);
                         string fileExtension = Path.GetExtension(filePath);
-                        _fileExtensionContentTypeProvider.TryGetContentType(filePath, out string fileMime);
+                        if(!_fileExtensionContentTypeProvider.TryGetContentType(filePath, out string fileMime))
+                        {
+                            fileMime = _appSettings["DefaultFileMime"];
+                        }
 
                         File file = new File(filePath, fileName, fileExtension, fileMime);
 
                         _filesSelected.Add(file);
 
-                        Tb_Attachment.Text = filePath;
+                        Tb_Attachment.Text += filePath + "\r\n";
                     }
                 }
             } 
@@ -220,7 +225,7 @@ namespace LogViewer
                     properties_file += ",\"File\":{\"type\":\"files\",\"files\":[";
                     for (int j = 0; j < fileIdList.Count; j++)
                     {
-                        properties_file += "{\"name\":\"" + _filesSelected[j].FileName + "\",\"type\":\"external\",\"external\":{\"url\":\"https://drive.google.com/file/d/" + fileIdList[j] + "\"}}";
+                        properties_file += "{\"name\":\"" + _filesSelected[j].FileName + _filesSelected[j].FileExtension + "\",\"type\":\"external\",\"external\":{\"url\":\"https://drive.google.com/file/d/" + fileIdList[j] + "\"}}";
 
                         if (j < fileIdList.Count - 1) properties_file += ",";
                     }
