@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using System.Configuration;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Auth.OAuth2.Flows;
@@ -34,7 +35,7 @@ namespace LogViewer
                 type = _configuration["GoogleDriveType"],
                 project_id = _configuration["GoogleDriveProjectId"],
                 private_key_id = _configuration["GoogleDrivePrivateKeyId"],
-                private_key = _configuration["GoogleDrivePrivateKey"],
+                private_key = Regex.Unescape(_configuration["GoogleDrivePrivateKey"]),
                 client_email = _configuration["GoogleDriveClientEmail"],
                 client_id = _configuration["GoogleDriveClientId"],
                 auth_uri = _configuration["GoogleDriveAuthUri"],
@@ -42,6 +43,8 @@ namespace LogViewer
                 auth_provider_x509_cert_url = _configuration["GoogleDriveAuthProviderX509CertUrl"],
                 client_x509_cert_url = _configuration["GoogleDriveClientX509CertUrl"]
             };
+
+            Console.WriteLine(json);
 
             var credential = GoogleCredential.FromJson(JsonConvert.SerializeObject(json)).CreateScoped(DriveService.ScopeConstants.Drive);
 

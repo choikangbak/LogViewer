@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form_Main));
             this.Dgv_Log = new System.Windows.Forms.DataGridView();
             this.Dtp_StartTime = new System.Windows.Forms.DateTimePicker();
             this.Dtp_EndTime = new System.Windows.Forms.DateTimePicker();
@@ -256,7 +255,6 @@
             this.Controls.Add(this.Dtp_EndTime);
             this.Controls.Add(this.Dtp_StartTime);
             this.Controls.Add(this.Dgv_Log);
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximumSize = new System.Drawing.Size(1036, 676);
             this.MinimumSize = new System.Drawing.Size(1036, 676);
             this.Name = "Form_Main";

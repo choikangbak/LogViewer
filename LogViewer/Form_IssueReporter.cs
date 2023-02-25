@@ -100,7 +100,7 @@ namespace LogViewer
             }
             else if (!isRegularExpression(issueTitle) || !isRegularExpression(issueContent))
             {
-                MessageBox.Show("특수문자('{}', '\\', '`', '&', '|', '^', ';')는 포함하실 수 없습니다.", "메시지 - CLE Inc.", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBox.Show("특수문자('{}', '\\', '`', '&', '|', '^', ';', '\"', '\'')는 포함하실 수 없습니다.", "메시지 - CLE Inc.", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
             else if (!IsConnected2Internet())
             {
@@ -116,7 +116,11 @@ namespace LogViewer
                 _backgroundWorker.DoWork += Bw_SendIssue2Notion;
                 _backgroundWorker.DoWork += Bw_SendIssue2Slack;
                 _backgroundWorker.RunWorkerCompleted += Bw_SendIssueCompleted;
-                _backgroundWorker.RunWorkerAsync();
+
+                if (_backgroundWorker.IsBusy != true)
+                {
+                    _backgroundWorker.RunWorkerAsync();
+                }
             }
         }
 
