@@ -146,12 +146,12 @@ namespace LogViewer
             string endTime = Dtp_EndTime.Value.ToString(_configuration["DateTimeFormat"]);
 
             List<string> levels = new List<string>();
-            if (Cb_Trace.Checked) levels.Add("T"); // 
-            if (Cb_Debug.Checked) levels.Add("D"); // 
-            if (Cb_Info.Checked) levels.Add("I"); // 
-            if (Cb_Warning.Checked) levels.Add("W"); // 
-            if (Cb_Error.Checked) levels.Add("E"); // 
-            if (Cb_Critical.Checked) levels.Add("C"); // 
+            if (Cb_Trace.Checked) levels.Add("Trace"); 
+            if (Cb_Debug.Checked) levels.Add("Debug"); 
+            if (Cb_Info.Checked) levels.Add("Info"); 
+            if (Cb_Warning.Checked) levels.Add("Warning"); 
+            if (Cb_Error.Checked) levels.Add("Error"); 
+            if (Cb_Critical.Checked) levels.Add("Critical"); 
 
             string keyword = Tb_SearchLog.Text.Trim();
 
