@@ -19,7 +19,7 @@ namespace LogViewer
     {
         private FileExtensionContentTypeProvider _fileExtensionContentTypeProvider;
         private BackgroundWorker _backgroundWorker;
-        private NameValueCollection _appSettings;
+        private NameValueCollection _configuration;
         private FileUploader _fileUploader;
         private List<string> _logsSelected;
         private List<File> _filesSelected;
@@ -30,7 +30,7 @@ namespace LogViewer
             InitializeComponent();
             _fileExtensionContentTypeProvider = new FileExtensionContentTypeProvider();
             _backgroundWorker = new BackgroundWorker();
-            _appSettings = ConfigurationManager.AppSettings;
+            _configuration = ConfigurationManager.AppSettings;
             _fileUploader = new FileUploader();
             _logsSelected = new List<string>(); 
             _filesSelected = new List<File>();
@@ -75,7 +75,7 @@ namespace LogViewer
                         string fileExtension = Path.GetExtension(filePath);
                         if(!_fileExtensionContentTypeProvider.TryGetContentType(filePath, out string fileMime))
                         {
-                            fileMime = _appSettings["DefaultFileMime"];
+                            fileMime = _configuration["DefaultFileMime"];
                         }
 
                         File file = new File(filePath, fileName, fileExtension, fileMime);
@@ -100,7 +100,7 @@ namespace LogViewer
             }
             else if (!isRegularExpression(issueTitle) || !isRegularExpression(issueContent))
             {
-                MessageBox.Show("제목과 내용에는 한글, 영어, 숫자, 공백 및 특수문자('.', '_', '-')만 포함 가능합니다.", "메시지 - CLE Inc.", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBox.Show("특수문자('{}', '\\', '`', '&', '|', '^', ';', '\"', '\'')는 포함하실 수 없습니다.", "메시지 - CLE Inc.", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
             else if (!IsConnected2Internet())
             {
@@ -116,13 +116,17 @@ namespace LogViewer
                 _backgroundWorker.DoWork += Bw_SendIssue2Notion;
                 _backgroundWorker.DoWork += Bw_SendIssue2Slack;
                 _backgroundWorker.RunWorkerCompleted += Bw_SendIssueCompleted;
-                _backgroundWorker.RunWorkerAsync();
+
+                if (_backgroundWorker.IsBusy != true)
+                {
+                    _backgroundWorker.RunWorkerAsync();
+                }
             }
         }
 
         private bool isRegularExpression(string str)
         {
-            var regex = new Regex(_appSettings["RegularExpression"]);
+            var regex = new Regex(_configuration["RegularExpression"]);
 
             if (regex.IsMatch(str))
             {
@@ -172,12 +176,12 @@ namespace LogViewer
 
             try
             {
-                var httpWebRequest = (HttpWebRequest)WebRequest.Create(_appSettings["NotionApiUrl"]);
+                var httpWebRequest = (HttpWebRequest)WebRequest.Create(_configuration["NotionApiUrl"]);
                 httpWebRequest.ContentType = "application/json";
                 httpWebRequest.Method = "POST";
 
-                httpWebRequest.Headers.Add("Authorization", _appSettings["NotionAuthorization"]);
-                httpWebRequest.Headers.Add("Notion-Version", _appSettings["NotionVersion"]);
+                httpWebRequest.Headers.Add("Authorization", _configuration["NotionAuthorization"]);
+                httpWebRequest.Headers.Add("Notion-Version", _configuration["NotionVersion"]);
 
                 string json = GetNotionHttpRequestBody(issueTitle, issueContent);
 
@@ -209,7 +213,7 @@ namespace LogViewer
 
             try
             {
-                var httpWebRequest = (HttpWebRequest)WebRequest.Create(_appSettings["SlackApiUrl"]);
+                var httpWebRequest = (HttpWebRequest)WebRequest.Create(_configuration["SlackApiUrl"]);
                 httpWebRequest.ContentType = "text/json";
                 httpWebRequest.Method = "POST";
 
@@ -248,7 +252,7 @@ namespace LogViewer
         private string GetNotionHttpRequestBody(string issueTitle, string issueContent)
         {
             // 1. parent 
-            string parent = "\"parent\":{\"database_id\":\"" + _appSettings["NotionDatabaseId"] + "\"}";
+            string parent = "\"parent\":{\"database_id\":\"" + _configuration["NotionDatabaseId"] + "\"}";
 
             // 2. icon
             string icon = "\"icon\":{\"emoji\":\"📢\"}";
@@ -327,7 +331,7 @@ namespace LogViewer
 
         private string GetSlackHttpRequestBody(string issueTitle, string issueContent)
         { 
-            string json = "{\"text\":\"*** 새로운 이슈 ***\n제목: " + issueTitle + "\n내용: " + issueContent + "\n\n이슈 링크: \n" + _appSettings["SlackIssueTrackerUrl"] + "\"}";
+            string json = "{\"text\":\"*** 새로운 이슈 ***\n제목: " + issueTitle + "\n내용: " + issueContent + "\n\n이슈 링크: \n" + _configuration["SlackIssueTrackerUrl"] + "\"}";
 
             return json;
         }

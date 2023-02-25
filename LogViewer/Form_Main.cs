@@ -19,7 +19,7 @@ namespace LogViewer
     public partial class Form_Main : Form
     {
         private BackgroundWorker _backgroundWorker;
-        private NameValueCollection _appSettings;
+        private NameValueCollection _configuration;
         private DatabaseConnector _databaseConnector;
         private LogDataAccess _logDataAccess;
         private List<Log> _logList;
@@ -27,7 +27,7 @@ namespace LogViewer
         public Form_Main()
         {
             InitializeComponent();
-            _appSettings = ConfigurationManager.AppSettings;
+            _configuration = ConfigurationManager.AppSettings;
             _backgroundWorker = new BackgroundWorker();
             _logList = new List<Log>();
         }
@@ -99,7 +99,7 @@ namespace LogViewer
             }
             else if (!isRegularExpression(Tb_SearchLog.Text.Trim()))
             {
-                MessageBox.Show("검색어에는 한글, 영어, 숫자, 공백 및 특수문자('.', '_', '-')만 포함 가능합니다.", "메시지 - CLE Inc.", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBox.Show("특수문자('{}', '\\', '`', '&', '|', '^', ';', '\"', '\'')는 포함하실 수 없습니다.", "메시지 - CLE Inc.", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
             else
             {
@@ -128,7 +128,7 @@ namespace LogViewer
 
         private bool isRegularExpression(string str)
         {
-            var regex = new Regex(_appSettings["RegularExpression"]);
+            var regex = new Regex(_configuration["RegularExpression"]);
 
             if (regex.IsMatch(str))
             {
@@ -142,8 +142,8 @@ namespace LogViewer
 
         private void Bw_GetSearchedLog(object sender, DoWorkEventArgs e)
         {
-            string startTime = Dtp_StartTime.Value.ToString(_appSettings["DateTimeFormat"]);
-            string endTime = Dtp_EndTime.Value.ToString(_appSettings["DateTimeFormat"]);
+            string startTime = Dtp_StartTime.Value.ToString(_configuration["DateTimeFormat"]);
+            string endTime = Dtp_EndTime.Value.ToString(_configuration["DateTimeFormat"]);
 
             List<string> levels = new List<string>();
             if (Cb_Trace.Checked) levels.Add("Trace");
@@ -168,14 +168,14 @@ namespace LogViewer
             Dgv_Log.Columns[0].Visible = false;
             Dgv_Log.Columns[4].Visible = false;
 
-            Dgv_Log.Columns[1].HeaderText = _appSettings["TimestampHeaderText"];
-            Dgv_Log.Columns[2].HeaderText = _appSettings["LevelHeaderText"];
-            Dgv_Log.Columns[3].HeaderText = _appSettings["MessageHeaderText"];
+            Dgv_Log.Columns[1].HeaderText = _configuration["TimestampHeaderText"];
+            Dgv_Log.Columns[2].HeaderText = _configuration["LevelHeaderText"];
+            Dgv_Log.Columns[3].HeaderText = _configuration["MessageHeaderText"];
 
             Dgv_Log.Columns[1].Width = 150;
             Dgv_Log.Columns[2].Width = 80;
 
-            Dgv_Log.Columns[1].DefaultCellStyle.Format = _appSettings["DateTimeFormat"];
+            Dgv_Log.Columns[1].DefaultCellStyle.Format = _configuration["DateTimeFormat"];
 
             EnableControls(true);
         }

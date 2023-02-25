@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using System.Configuration;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Auth.OAuth2.Flows;
@@ -12,6 +13,7 @@ using Google.Apis.Drive.v3;
 using Google.Apis.Services;
 using Google.Apis.Upload;
 using Google.Apis.Util.Store;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using static Google.Apis.Drive.v3.DriveService;
 
@@ -19,16 +21,32 @@ namespace LogViewer
 {
     public class FileUploader
     {
-        private readonly NameValueCollection _appSettings;
+        private readonly NameValueCollection _configuration;
 
         public FileUploader() 
         {
-            _appSettings = ConfigurationManager.AppSettings;
+            _configuration = ConfigurationManager.AppSettings;
         }
 
         public DriveService GetService()
         {
-            var credential = GoogleCredential.FromFile(_appSettings["GoogleDriveCredentialFilePath"]).CreateScoped(DriveService.ScopeConstants.Drive);
+            var json = new
+            {
+                type = _configuration["GoogleDriveType"],
+                project_id = _configuration["GoogleDriveProjectId"],
+                private_key_id = _configuration["GoogleDrivePrivateKeyId"],
+                private_key = Regex.Unescape(_configuration["GoogleDrivePrivateKey"]),
+                client_email = _configuration["GoogleDriveClientEmail"],
+                client_id = _configuration["GoogleDriveClientId"],
+                auth_uri = _configuration["GoogleDriveAuthUri"],
+                token_uri = _configuration["GoogleDriveTokenUri"],
+                auth_provider_x509_cert_url = _configuration["GoogleDriveAuthProviderX509CertUrl"],
+                client_x509_cert_url = _configuration["GoogleDriveClientX509CertUrl"]
+            };
+
+            Console.WriteLine(json);
+
+            var credential = GoogleCredential.FromJson(JsonConvert.SerializeObject(json)).CreateScoped(DriveService.ScopeConstants.Drive);
 
             var service = new DriveService(new BaseClientService.Initializer()
             {
@@ -50,7 +68,7 @@ namespace LogViewer
                 var driveFile = new Google.Apis.Drive.v3.Data.File();
                 driveFile.Name = fileName;
                 driveFile.MimeType = fileMime;
-                driveFile.Parents = new string[] { _appSettings["GoogleDriveFolderId"] };
+                driveFile.Parents = new string[] { _configuration["GoogleDriveFolderId"] };
 
                 var fsSource = new FileStream(file.FilePath, FileMode.Open, FileAccess.Read);
 
