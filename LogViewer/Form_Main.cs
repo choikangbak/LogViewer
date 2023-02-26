@@ -178,8 +178,9 @@ namespace LogViewer
             Dgv_Log.Columns[1].DefaultCellStyle.Format = _configuration["DateTimeFormat"];
 
             Dgv_Log.Columns[3].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            int messageColumnWidth = Dgv_Log.Columns[3].Width;
             Dgv_Log.Columns[3].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            Dgv_Log.Columns[3].Width = Dgv_Log.Columns[3].Width;
+            Dgv_Log.Columns[3].Width = messageColumnWidth;
 
             Lb_SearchedLog.Text = "조회된 로그 개수: " + _logList.Count;
 
