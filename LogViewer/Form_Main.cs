@@ -44,6 +44,7 @@ namespace LogViewer
             Cb_Warning.Enabled = isEnable;
             Cb_Error.Enabled = isEnable;
             Cb_Critical.Enabled = isEnable;
+            Cb_Desc.Enabled = isEnable;
             Tb_SearchLog.Enabled = isEnable;
             Btn_SearchLog.Enabled = isEnable;
             Dgv_Log.Enabled = isEnable;
@@ -151,11 +152,13 @@ namespace LogViewer
             if (Cb_Info.Checked) levels.Add("Info"); 
             if (Cb_Warning.Checked) levels.Add("Warning"); 
             if (Cb_Error.Checked) levels.Add("Error"); 
-            if (Cb_Critical.Checked) levels.Add("Critical"); 
+            if (Cb_Critical.Checked) levels.Add("Critical");
 
             string keyword = Tb_SearchLog.Text.Trim();
 
-            _logList = _logDataAccess.SearchLog(startTime, endTime, levels, keyword);
+            string order = (Cb_Desc.Checked) ? "DESC" : "ASC";
+
+            _logList = _logDataAccess.SearchLog(startTime, endTime, levels, keyword, order);
         }
 
         private void Bw_GetSearchedLogCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -164,7 +167,7 @@ namespace LogViewer
             Pb_LoadLog.Value = 0;
 
             Dgv_Log.DataSource = _logList;
-
+            
             Dgv_Log.Columns[0].Visible = false;
             Dgv_Log.Columns[4].Visible = false;
 
@@ -172,10 +175,9 @@ namespace LogViewer
             Dgv_Log.Columns[2].HeaderText = _configuration["LevelHeaderText"];
             Dgv_Log.Columns[3].HeaderText = _configuration["MessageHeaderText"];
 
-            Dgv_Log.Columns[1].Width = 150;
-            Dgv_Log.Columns[2].Width = 80;
-
             Dgv_Log.Columns[1].DefaultCellStyle.Format = _configuration["DateTimeFormat"];
+
+            Lb_SearchedLog.Text = "조회된 로그 개수: " + _logList.Count;
 
             EnableControls(true);
         }
@@ -243,6 +245,11 @@ namespace LogViewer
                 contextMenuStrip.Items.Add(toolStripMenuItem);
                 contextMenuStrip.Show(MousePosition);
             }
+        }
+
+        private void Dgv_Log_SelectionChanged(object sender, EventArgs e)
+        {
+            Lb_SelectedLog.Text = "선택된 로그 개수: " + Dgv_Log.SelectedRows.Count;
         }
     }
 }
