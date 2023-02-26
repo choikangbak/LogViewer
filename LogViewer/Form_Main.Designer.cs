@@ -177,10 +177,10 @@
             // Tb_SearchLog
             // 
             this.Tb_SearchLog.Enabled = false;
-            this.Tb_SearchLog.Location = new System.Drawing.Point(855, 43);
+            this.Tb_SearchLog.Location = new System.Drawing.Point(851, 43);
             this.Tb_SearchLog.Margin = new System.Windows.Forms.Padding(2);
             this.Tb_SearchLog.Name = "Tb_SearchLog";
-            this.Tb_SearchLog.Size = new System.Drawing.Size(161, 23);
+            this.Tb_SearchLog.Size = new System.Drawing.Size(164, 23);
             this.Tb_SearchLog.TabIndex = 10;
             this.Tb_SearchLog.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Tb_SearchLog_KeyDown);
             // 

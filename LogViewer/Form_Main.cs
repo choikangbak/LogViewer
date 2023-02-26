@@ -94,11 +94,7 @@ namespace LogViewer
 
         private void SearchLog()
         {
-            if (!isWithinTheTimePeriod(Dtp_StartTime.Value))
-            {
-                MessageBox.Show("72시간 이전의 로그는 조회하실 수 없습니다.", "메시지 - CLE Inc.", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-            }
-            else if (!isRegularExpression(Tb_SearchLog.Text.Trim()))
+            if (!isRegularExpression(Tb_SearchLog.Text.Trim()))
             {
                 MessageBox.Show("특수문자('{}', '\\', '`', '&', '|', '^', ';', '\"', '\'')는 포함하실 수 없습니다.", "메시지 - CLE Inc.", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
@@ -112,18 +108,6 @@ namespace LogViewer
                 _backgroundWorker.DoWork += Bw_GetSearchedLog;
                 _backgroundWorker.RunWorkerCompleted += Bw_GetSearchedLogCompleted;
                 _backgroundWorker.RunWorkerAsync();
-            }
-        }
-
-        private bool isWithinTheTimePeriod(DateTime startTime)
-        {
-            if (startTime >= DateTime.Now.AddDays(-3))
-            {
-                return true;
-            }
-            else
-            {
-                return false;
             }
         }
 
