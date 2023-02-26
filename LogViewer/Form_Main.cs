@@ -177,8 +177,9 @@ namespace LogViewer
 
             Dgv_Log.Columns[1].DefaultCellStyle.Format = _configuration["DateTimeFormat"];
 
-            // scroll bar for both
             Dgv_Log.ScrollBars = ScrollBars.Both;
+
+            Lb_SearchedLog.Text = "조회된 로그 개수: " + _logList.Count;
 
             EnableControls(true);
         }
@@ -246,6 +247,11 @@ namespace LogViewer
                 contextMenuStrip.Items.Add(toolStripMenuItem);
                 contextMenuStrip.Show(MousePosition);
             }
+        }
+
+        private void Dgv_Log_SelectionChanged(object sender, EventArgs e)
+        {
+            Lb_SelectedLog.Text = "선택된 로그 개수: " + Dgv_Log.SelectedRows.Count;
         }
     }
 }

@@ -43,6 +43,8 @@
             this.Tb_DbPassword = new System.Windows.Forms.TextBox();
             this.Btn_InsertDbPassword = new System.Windows.Forms.Button();
             this.Pb_LoadLog = new System.Windows.Forms.ProgressBar();
+            this.Lb_SearchedLog = new System.Windows.Forms.Label();
+            this.Lb_SelectedLog = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.Dgv_Log)).BeginInit();
             this.SuspendLayout();
             // 
@@ -63,6 +65,7 @@
             this.Dgv_Log.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.Dgv_Log.Size = new System.Drawing.Size(971, 522);
             this.Dgv_Log.TabIndex = 0;
+            this.Dgv_Log.SelectionChanged += new System.EventHandler(this.Dgv_Log_SelectionChanged);
             this.Dgv_Log.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Dgv_Log_MouseUp);
             // 
             // Dtp_StartTime
@@ -235,11 +238,31 @@
             this.Pb_LoadLog.Step = 1;
             this.Pb_LoadLog.TabIndex = 17;
             // 
+            // Lb_SearchedLog
+            // 
+            this.Lb_SearchedLog.AutoSize = true;
+            this.Lb_SearchedLog.Location = new System.Drawing.Point(25, 608);
+            this.Lb_SearchedLog.Name = "Lb_SearchedLog";
+            this.Lb_SearchedLog.Size = new System.Drawing.Size(106, 15);
+            this.Lb_SearchedLog.TabIndex = 18;
+            this.Lb_SearchedLog.Text = "조회된 로그 개수: ";
+            // 
+            // Lb_SelectedLog
+            // 
+            this.Lb_SelectedLog.AutoSize = true;
+            this.Lb_SelectedLog.Location = new System.Drawing.Point(237, 608);
+            this.Lb_SelectedLog.Name = "Lb_SelectedLog";
+            this.Lb_SelectedLog.Size = new System.Drawing.Size(106, 15);
+            this.Lb_SelectedLog.TabIndex = 19;
+            this.Lb_SelectedLog.Text = "선택된 로그 개수: ";
+            // 
             // Form_Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1020, 637);
+            this.Controls.Add(this.Lb_SelectedLog);
+            this.Controls.Add(this.Lb_SearchedLog);
             this.Controls.Add(this.Pb_LoadLog);
             this.Controls.Add(this.Btn_InsertDbPassword);
             this.Controls.Add(this.Tb_DbPassword);
@@ -284,5 +307,7 @@
         private TextBox Tb_DbPassword;
         private Button Btn_InsertDbPassword;
         private ProgressBar Pb_LoadLog;
+        private Label Lb_SearchedLog;
+        private Label Lb_SelectedLog;
     }
 }
