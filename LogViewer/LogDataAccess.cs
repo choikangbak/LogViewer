@@ -23,7 +23,7 @@ namespace LogViewer
             {
                 _connection.Open();
 
-                string sql = string.Format("SELECT * FROM log WHERE {0} {1} {2} ORDER BY timestamp DESC",
+                string sql = string.Format("SELECT * FROM log WHERE {0} {1} {2} ORDER BY created_at DESC",
                                             GetTimeStatement(startTime, endTime),
                                             GetLevelStatement(levels),
                                             GetKeywordStatement(keyword));
