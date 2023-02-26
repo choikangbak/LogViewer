@@ -51,7 +51,7 @@
             this.Dgv_Log.AllowUserToAddRows = false;
             this.Dgv_Log.AllowUserToDeleteRows = false;
             this.Dgv_Log.AllowUserToOrderColumns = true;
-            this.Dgv_Log.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.Dgv_Log.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.DisplayedCells;
             this.Dgv_Log.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.Dgv_Log.Enabled = false;
             this.Dgv_Log.Location = new System.Drawing.Point(25, 75);

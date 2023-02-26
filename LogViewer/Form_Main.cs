@@ -164,7 +164,7 @@ namespace LogViewer
             Pb_LoadLog.Value = 0;
 
             Dgv_Log.DataSource = _logList;
-
+            
             Dgv_Log.Columns[0].Visible = false;
             Dgv_Log.Columns[4].Visible = false;
 
@@ -176,6 +176,9 @@ namespace LogViewer
             Dgv_Log.Columns[2].Width = 80;
 
             Dgv_Log.Columns[1].DefaultCellStyle.Format = _configuration["DateTimeFormat"];
+
+            // scroll bar for both
+            Dgv_Log.ScrollBars = ScrollBars.Both;
 
             EnableControls(true);
         }
