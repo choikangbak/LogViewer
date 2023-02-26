@@ -172,14 +172,16 @@ namespace LogViewer
             Dgv_Log.Columns[2].HeaderText = _configuration["LevelHeaderText"];
             Dgv_Log.Columns[3].HeaderText = _configuration["MessageHeaderText"];
 
-            Dgv_Log.Columns[1].Width = 150;
-            Dgv_Log.Columns[2].Width = 80;
-
             Dgv_Log.Columns[1].DefaultCellStyle.Format = _configuration["DateTimeFormat"];
 
             Dgv_Log.ScrollBars = ScrollBars.Both;
 
             Lb_SearchedLog.Text = "조회된 로그 개수: " + _logList.Count;
+
+            foreach(DataGridViewColumn column in Dgv_Log.Columns)
+            {
+                column.SortMode = DataGridViewColumnSortMode.Automatic;
+            }
 
             EnableControls(true);
         }
