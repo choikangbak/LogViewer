@@ -46,6 +46,7 @@
             this.Lb_SearchedLog = new System.Windows.Forms.Label();
             this.Lb_SelectedLog = new System.Windows.Forms.Label();
             this.Cb_Desc = new System.Windows.Forms.CheckBox();
+            this.label1 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.Dgv_Log)).BeginInit();
             this.SuspendLayout();
             // 
@@ -109,7 +110,7 @@
             this.Cb_Debug.Checked = true;
             this.Cb_Debug.CheckState = System.Windows.Forms.CheckState.Checked;
             this.Cb_Debug.Enabled = false;
-            this.Cb_Debug.Location = new System.Drawing.Point(446, 46);
+            this.Cb_Debug.Location = new System.Drawing.Point(444, 46);
             this.Cb_Debug.Margin = new System.Windows.Forms.Padding(2);
             this.Cb_Debug.Name = "Cb_Debug";
             this.Cb_Debug.Size = new System.Drawing.Size(62, 19);
@@ -123,7 +124,7 @@
             this.Cb_Info.Checked = true;
             this.Cb_Info.CheckState = System.Windows.Forms.CheckState.Checked;
             this.Cb_Info.Enabled = false;
-            this.Cb_Info.Location = new System.Drawing.Point(516, 46);
+            this.Cb_Info.Location = new System.Drawing.Point(514, 46);
             this.Cb_Info.Margin = new System.Windows.Forms.Padding(2);
             this.Cb_Info.Name = "Cb_Info";
             this.Cb_Info.Size = new System.Drawing.Size(47, 19);
@@ -137,7 +138,7 @@
             this.Cb_Warning.Checked = true;
             this.Cb_Warning.CheckState = System.Windows.Forms.CheckState.Checked;
             this.Cb_Warning.Enabled = false;
-            this.Cb_Warning.Location = new System.Drawing.Point(571, 46);
+            this.Cb_Warning.Location = new System.Drawing.Point(569, 46);
             this.Cb_Warning.Margin = new System.Windows.Forms.Padding(2);
             this.Cb_Warning.Name = "Cb_Warning";
             this.Cb_Warning.Size = new System.Drawing.Size(71, 19);
@@ -151,7 +152,7 @@
             this.Cb_Error.Checked = true;
             this.Cb_Error.CheckState = System.Windows.Forms.CheckState.Checked;
             this.Cb_Error.Enabled = false;
-            this.Cb_Error.Location = new System.Drawing.Point(650, 46);
+            this.Cb_Error.Location = new System.Drawing.Point(648, 46);
             this.Cb_Error.Margin = new System.Windows.Forms.Padding(2);
             this.Cb_Error.Name = "Cb_Error";
             this.Cb_Error.Size = new System.Drawing.Size(51, 19);
@@ -165,7 +166,7 @@
             this.Cb_Critical.Checked = true;
             this.Cb_Critical.CheckState = System.Windows.Forms.CheckState.Checked;
             this.Cb_Critical.Enabled = false;
-            this.Cb_Critical.Location = new System.Drawing.Point(709, 46);
+            this.Cb_Critical.Location = new System.Drawing.Point(707, 46);
             this.Cb_Critical.Margin = new System.Windows.Forms.Padding(2);
             this.Cb_Critical.Name = "Cb_Critical";
             this.Cb_Critical.Size = new System.Drawing.Size(63, 19);
@@ -176,20 +177,20 @@
             // Tb_SearchLog
             // 
             this.Tb_SearchLog.Enabled = false;
-            this.Tb_SearchLog.Location = new System.Drawing.Point(842, 43);
+            this.Tb_SearchLog.Location = new System.Drawing.Point(855, 43);
             this.Tb_SearchLog.Margin = new System.Windows.Forms.Padding(2);
             this.Tb_SearchLog.Name = "Tb_SearchLog";
-            this.Tb_SearchLog.Size = new System.Drawing.Size(172, 23);
+            this.Tb_SearchLog.Size = new System.Drawing.Size(161, 23);
             this.Tb_SearchLog.TabIndex = 10;
             this.Tb_SearchLog.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Tb_SearchLog_KeyDown);
             // 
             // Btn_SearchLog
             // 
             this.Btn_SearchLog.Enabled = false;
-            this.Btn_SearchLog.Location = new System.Drawing.Point(1015, 42);
+            this.Btn_SearchLog.Location = new System.Drawing.Point(1016, 42);
             this.Btn_SearchLog.Margin = new System.Windows.Forms.Padding(2);
             this.Btn_SearchLog.Name = "Btn_SearchLog";
-            this.Btn_SearchLog.Size = new System.Drawing.Size(50, 25);
+            this.Btn_SearchLog.Size = new System.Drawing.Size(48, 25);
             this.Btn_SearchLog.TabIndex = 11;
             this.Btn_SearchLog.Text = "검색";
             this.Btn_SearchLog.UseVisualStyleBackColor = true;
@@ -201,7 +202,7 @@
             this.Cb_Trace.Checked = true;
             this.Cb_Trace.CheckState = System.Windows.Forms.CheckState.Checked;
             this.Cb_Trace.Enabled = false;
-            this.Cb_Trace.Location = new System.Drawing.Point(384, 46);
+            this.Cb_Trace.Location = new System.Drawing.Point(382, 46);
             this.Cb_Trace.Margin = new System.Windows.Forms.Padding(2);
             this.Cb_Trace.Name = "Cb_Trace";
             this.Cb_Trace.Size = new System.Drawing.Size(54, 19);
@@ -260,23 +261,34 @@
             // Cb_Desc
             // 
             this.Cb_Desc.AutoSize = true;
-            this.Cb_Desc.BackColor = System.Drawing.SystemColors.ActiveBorder;
+            this.Cb_Desc.BackColor = System.Drawing.SystemColors.ButtonFace;
             this.Cb_Desc.Checked = true;
             this.Cb_Desc.CheckState = System.Windows.Forms.CheckState.Checked;
             this.Cb_Desc.Enabled = false;
-            this.Cb_Desc.Location = new System.Drawing.Point(780, 46);
+            this.Cb_Desc.Location = new System.Drawing.Point(785, 46);
             this.Cb_Desc.Margin = new System.Windows.Forms.Padding(2);
             this.Cb_Desc.Name = "Cb_Desc";
-            this.Cb_Desc.Size = new System.Drawing.Size(50, 19);
+            this.Cb_Desc.Size = new System.Drawing.Size(62, 19);
             this.Cb_Desc.TabIndex = 20;
-            this.Cb_Desc.Text = "역순";
+            this.Cb_Desc.Text = "시간순";
             this.Cb_Desc.UseVisualStyleBackColor = false;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Malgun Gothic", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.label1.Location = new System.Drawing.Point(769, 43);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(13, 20);
+            this.label1.TabIndex = 21;
+            this.label1.Text = "|";
             // 
             // Form_Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1092, 637);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.Cb_Desc);
             this.Controls.Add(this.Lb_SelectedLog);
             this.Controls.Add(this.Lb_SearchedLog);
@@ -327,5 +339,6 @@
         private Label Lb_SearchedLog;
         private Label Lb_SelectedLog;
         private CheckBox Cb_Desc;
+        private Label label1;
     }
 }

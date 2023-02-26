@@ -156,7 +156,7 @@ namespace LogViewer
 
             string keyword = Tb_SearchLog.Text.Trim();
 
-            string order = (Cb_Desc.Checked) ? "DESC" : "ASC";
+            string order = (Cb_Desc.Checked) ? "ASC" : "DESC";
 
             _logList = _logDataAccess.SearchLog(startTime, endTime, levels, keyword, order);
         }
