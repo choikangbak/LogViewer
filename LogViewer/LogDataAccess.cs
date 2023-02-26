@@ -17,16 +17,17 @@ namespace LogViewer
             _connection = connection;
         }
 
-        public List<Log> SearchLog(string startTime, string endTime, List<string> levels, string keyword)
+        public List<Log> SearchLog(string startTime, string endTime, List<string> levels, string keyword, string order)
         {
             try
             {
                 _connection.Open();
 
-                string sql = string.Format("SELECT * FROM log WHERE {0} {1} {2} ORDER BY created_at DESC",
+                string sql = string.Format("SELECT * FROM log WHERE {0} {1} {2} ORDER BY created_at {3}",
                                             GetTimeStatement(startTime, endTime),
                                             GetLevelStatement(levels),
-                                            GetKeywordStatement(keyword));
+                                            GetKeywordStatement(keyword),
+                                            order);
 
                 List<Log> logList = _connection.Query<Log>(sql).ToList();
 
